@@ -31,10 +31,13 @@
   .drop p{color:var(--muted);font-size:13px;margin:12px 0 0}
   .drop input{display:none}
   details.howto{margin:16px 0 0;border:1px solid var(--line);border-radius:8px;background:#fff;padding:0 14px}
-  details.howto summary{cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);padding:12px 0;list-style:none}
+  details.howto summary{cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);padding:12px 4px;list-style:none;user-select:none}
   details.howto summary::-webkit-details-marker{display:none}
-  details.howto summary::before{content:"A  ";color:var(--faint)}
-  details.howto[open] summary::before{content:"4  "}
+  details.howto summary::marker{content:"";font-size:0}
+  details.howto summary:hover{color:var(--ink)}
+  details.howto summary .caret{width:0;height:0;border-left:7px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s ease;flex:0 0 auto}
+  details.howto[open] summary .caret{transform:rotate(90deg)}
+  details.howto summary .lnk{text-decoration:underline;text-underline-offset:3px}
   details.howto ol{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:13px}
   details.howto li{margin:0 0 6px}
   code{font-family:var(--mono);font-size:12px;background:#f0f3f3;padding:1px 5px;border-radius:4px}
@@ -104,6 +107,14 @@
   .req .val{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600}
   .req .val small{color:var(--faint);font-weight:400}
   .crit .obs{font-size:12.5px;color:var(--muted);padding:12px 18px;border-top:1px solid var(--line)}
+  .repro{display:grid;gap:0;border:1px solid var(--line2);border-radius:8px;overflow:hidden}
+  .repro .r{display:grid;grid-template-columns:236px 1fr;gap:14px;padding:11px 16px;border-top:1px solid var(--line);font-size:13.5px;align-items:baseline}
+  .repro .r:first-child{border-top:none}
+  .repro .r .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .repro a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;word-break:break-word}
+  .repro small{color:var(--faint);font-size:12px}
+  .repro .note{padding:12px 16px;border-top:1px solid var(--line);line-height:1.65;color:var(--muted);font-size:12.5px}
+  @media(max-width:640px){.repro .r{grid-template-columns:1fr;gap:3px}}
   footer.foot{color:var(--faint);font-size:12px;margin-top:34px;border-top:1px solid var(--line);padding-top:14px}
 </style>
 </head>
@@ -123,7 +134,7 @@
       <p>Envie o arquivo <b>.xml</b> (ou o <b>.zip</b> que o contém) exportado pela Plataforma Lattes. Leitura exata e local; nada sai do seu computador.</p>
     </div>
     <details class="howto">
-      <summary>Como obter o XML do Lattes</summary>
+      <summary><span class="caret"></span><span class="lnk">Como obter o XML do Lattes</span></summary>
       <ol>
         <li>Acesse a Plataforma Lattes (<code>lattes.cnpq.br</code>) e entre no seu currículo com login e senha.</li>
         <li>No topo do currículo, clique em <b>Atualizar currículo</b> (ou abra o editor do currículo).</li>
@@ -163,6 +174,21 @@
   <section class="panel">
     <div class="panel-head"><span class="step">5</span><h2>Verificação do regimento</h2><span class="hint">Resolução nº 1/2025 · Art. 3º e 4º</span></div>
     <div id="compliance"><p class="score-empty">Envie o XML do Lattes para verificar.</p></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><span class="step">6</span><h2>Conferência e reprodutibilidade</h2><span class="hint">fontes oficiais</span></div>
+    <div class="repro">
+      <div class="r"><span class="k">Regimento</span><span class="v"><a href="./regimento-ppgi-2025.pdf">Resolução nº 1/2025 — PPGI/UFAL</a> <small>coloque o PDF assinado no repositório com este nome; base dos critérios e da tabela de pontuação</small></span></div>
+      <div class="r"><span class="k">Docentes do PPGI</span><span class="v"><a href="https://ic.ufal.br/pt-br/pos-graduacao/informatica/docentes" target="_blank" rel="noopener">ic.ufal.br/pt-br/pos-graduacao/informatica/docentes</a> <small>lista (permanentes e colaboradores) usada na divisão de pontos por coautoria; incorporada nesta página</small></span></div>
+      <div class="r"><span class="k">Currículo Lattes</span><span class="v"><a href="https://lattes.cnpq.br" target="_blank" rel="noopener">lattes.cnpq.br</a> <small>exporte o currículo em XML (passo a passo no item 1)</small></span></div>
+      <div class="r"><span class="k">Qualis periódicos · Computação</span><span class="v"><a href="./classificacoes_publicadas_computacao_2026.xlsx">classificacoes_publicadas_computacao_2026.xlsx</a></span></div>
+      <div class="r"><span class="k">Qualis periódicos · Interdisciplinar</span><span class="v"><a href="./classificacoes_publicadas_interdisciplinar_2026.xlsx">classificacoes_publicadas_interdisciplinar_2026.xlsx</a></span></div>
+      <div class="r"><span class="k">Qualis conferências · CC</span><span class="v"><a href="./qualis-conferencias.xlsx">qualis-conferencias.xlsx</a> <small>gerada do PDF Qualis_CC-confs.pdf da área de Computação</small></span></div>
+      <div class="r"><span class="k">Qualis · fonte oficial</span><span class="v"><a href="https://sucupira.capes.gov.br" target="_blank" rel="noopener">Plataforma Sucupira (CAPES)</a> — consulta e download das classificações Qualis Referência de periódicos</span></div>
+      <div class="r"><span class="k">Documento de área · CC</span><span class="v"><a href="https://www.gov.br/capes/pt-br/centrais-de-conteudo/documentos/avaliacao/qualis_periodico_eventos_cientifico_Ciencia_Computacao.pdf" target="_blank" rel="noopener">Qualis de periódicos e eventos — Ciência da Computação (CAPES)</a> <small>metodologia citada no regimento</small></span></div>
+      <div class="note">Notas de método: a pontuação por estrato segue a tabela do regimento (A1 a B1; abaixo de B1 vale 0); a pontuação de trabalhos em coautoria é dividida pelo número de coautores docentes do PPGI; a coautoria com discente é aferida pelos orientandos listados no Lattes; as janelas são aproximadas por ano-calendário (36 meses ≈ 3 anos; 24 meses ≈ 2 anos), pois o Lattes informa apenas o ano. Para reproduzir com dados oficiais, use as planilhas Qualis do quadriênio vigente e o currículo Lattes atualizado do docente.</div>
+    </div>
   </section>
 
   <footer class="foot">
@@ -246,6 +272,9 @@ document.getElementById("file").addEventListener("change",async ev=>{
 function decodeXml(buffer){const b=new Uint8Array(buffer);let head="";for(let i=0;i<Math.min(b.length,300);i++)head+=String.fromCharCode(b[i]);let enc="utf-8";const m=head.match(/encoding\s*=\s*["']([^"']+)["']/i);if(m)enc=m[1].toLowerCase();if(enc.includes("8859")||enc.includes("latin")||enc.includes("1252"))enc="iso-8859-1";try{return new TextDecoder(enc).decode(buffer);}catch(e){try{return new TextDecoder("iso-8859-1").decode(buffer);}catch(_){return new TextDecoder("utf-8").decode(buffer);}}}
 function looksLattes(t){return /CURRICULO-VITAE|DADOS-GERAIS|ARTIGOS-PUBLICADOS|PRODUCAO-BIBLIOGRAFICA/i.test(t.slice(0,20000));}
 function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
+function orientandoDe(el){const ks=el.getElementsByTagName("*");for(const k of ks){const n=k.getAttribute("NOME-DO-ORIENTANDO")||k.getAttribute("NOME-DO-ORIENTADO");if(n)return n;}return el.getAttribute("NOME-DO-ORIENTANDO")||el.getAttribute("NOME-DO-ORIENTADO")||"";}
+function isDiscente(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size||!STATE.discenteTok)return false;for(const d of STATE.discenteTok){if(t.has(d.first)&&t.has(d.last))return true;}return false;}
+function temDiscente(autores){for(const a of (autores||[]))if(isDiscente(a))return true;return false;}
 function anoOrientacao(el){const ks=el.getElementsByTagName("*");for(const k of ks){const y=k.getAttribute("ANO")||k.getAttribute("ANO-DE-CONCLUSAO")||k.getAttribute("ANO-DE-INICIO");if(y&&/^\d{4}$/.test(y))return +y;}const y=el.getAttribute("ANO");return (y&&/^\d{4}$/.test(y))?+y:null;}
 function parseLattesXml(xml){
   STATE.articles=[];STATE.confs=[];
@@ -263,10 +292,15 @@ function parseLattesXml(xml){
     const evento=d?(d.getAttribute("NOME-DO-EVENTO")||d.getAttribute("TITULO-DOS-ANAIS-OU-PROCEEDINGS")||""):"";const aut=autoresDe(t);const cp=coautoresPpgi(aut);const div=Math.max(1,cp.length);
     STATE.confs.push({ano,titulo:b.getAttribute("TITULO-DO-TRABALHO")||"",evento,natureza:(b.getAttribute("NATUREZA")||"").toUpperCase(),autores:aut,coautoresPpgi:cp,divisorAuto:div,divisor:div,estrato:null,matched:false,matchType:null,override:null});
   }
-  STATE.orientOngoing=0;STATE.orientConcluidas=[];
+  STATE.orientOngoing=0;STATE.orientConcluidas=[];STATE.discenteTok=[];const _ds=new Set();
   for(const el of doc.getElementsByTagName("*")){const tn=el.tagName||"";
-    if(tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE")===0)STATE.orientOngoing++;
-    else if(tn.indexOf("ORIENTACOES-CONCLUIDAS-DE")===0||tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA")===0)STATE.orientConcluidas.push(anoOrientacao(el));}
+    const isAnd=tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE")===0;
+    const isCon=tn.indexOf("ORIENTACOES-CONCLUIDAS-DE")===0||tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA")===0;
+    if(isAnd)STATE.orientOngoing++;else if(isCon)STATE.orientConcluidas.push(anoOrientacao(el));
+    if(isAnd||isCon){const nm=orientandoDe(el);const t=nameTokens(nm);if(t.length>=2){const k=t[0]+"|"+t[t.length-1];if(!_ds.has(k)){_ds.add(k);STATE.discenteTok.push({first:t[0],last:t[t.length-1]});}}}
+  }
+  for(const a of STATE.articles)a.hasDiscente=temDiscente(a.autores);
+  for(const c of STATE.confs)c.hasDiscente=temDiscente(c.autores);
 }
 
 /* ===== correspondência ===== */
@@ -303,10 +337,10 @@ function recompute(){
   const soC=document.getElementById("soCompletos").checked;const wins=windows(Y);
   document.getElementById("windowsNote").textContent="Janelas móveis: ano corrente = "+Y+" · 2 anos = "+(Y-1)+"–"+Y+" · 3 anos = "+(Y-2)+"–"+Y+" (janela do regimento, ~36 meses) · 5 anos = "+(Y-4)+"–"+Y;
   const confItems=STATE.confs.filter(c=>!soC||c.natureza==="COMPLETO");
-  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato,divisor:a.divisor||1})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato,divisor:c.divisor||1}))];
-  const agg={};for(const w of wins)agg[w.key]={total:0,per:0,conf:0,nPer:0,nConf:0,byEstr:{per:{},conf:{}}};
+  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato,divisor:a.divisor||1,disc:!!a.hasDiscente})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato,divisor:c.divisor||1,disc:!!c.hasDiscente}))];
+  const agg={};for(const w of wins)agg[w.key]={total:0,per:0,conf:0,nPer:0,nConf:0,nDisc:0,byEstr:{per:{},conf:{}}};
   for(const it of items){if(it.ano===null)continue;const eff=ptsBase(it)/(it.divisor||1);
-    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=eff;if(it.tipo==="per"){A.per+=eff;A.nPer++;}else{A.conf+=eff;A.nConf++;}if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=eff;}}}
+    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=eff;if(it.disc)A.nDisc++;if(it.tipo==="per"){A.per+=eff;A.nPer++;}else{A.conf+=eff;A.nConf++;}if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=eff;}}}
   renderResults(wins,agg);renderCompliance(Y,soC);
 }
 
@@ -324,7 +358,7 @@ function renderResults(wins,agg){
   if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<div class="banner err"><span class="ico">!</span><span>Nenhuma publicação lida do XML. Confirme que o arquivo é o currículo exportado do Lattes.</span></div>';return;}
   let h='<div class="ficha">';
   for(const w of wins){const A=agg[w.key];const yrs=w.from===w.to?String(w.to):w.from+"–"+w.to;
-    h+='<div class="card'+(w.reg?" win3":"")+'"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+(w.reg?" · regimento":"")+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div></div></div>';}
+    h+='<div class="card'+(w.reg?" win3":"")+'"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+(w.reg?" · regimento":"")+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div><div><span>Com discente</span><b>'+A.nDisc+'/'+(A.nPer+A.nConf)+((A.nPer+A.nConf)>0?' · '+Math.round(A.nDisc/(A.nPer+A.nConf)*100)+'%':'')+'</b></div></div></div>';}
   h+='</div>';
   h+=breakdown("Periódicos por estrato","per",wins,agg)+breakdown("Conferências por estrato","conf",wins,agg)+review();
   el.innerHTML=h;wireInputs();
@@ -366,20 +400,23 @@ function renderCompliance(Y,soC){
   const el=document.getElementById("compliance");
   if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<p class="score-empty">Envie o XML do Lattes para verificar.</p>';return;}
   const from=Y-2,to=Y;
-  let pts=0,nA3=0,nA4=0;
+  let pts=0,nA3=0,nA4=0,discW=0;
   for(const a of STATE.articles){if(a.ano===null||a.ano<from||a.ano>to)continue;
     if(a.estrato&&ESTR_VALIDOS.has(a.estrato))pts+=(STATE.scorePer[a.estrato]||0)/(a.divisor||1);
-    if(a.estrato&&A3_MAIS.has(a.estrato))nA3++;if(a.estrato&&A4_MAIS.has(a.estrato))nA4++;}
-  for(const c of STATE.confs){if(soC&&c.natureza!=="COMPLETO")continue;if(c.ano===null||c.ano<from||c.ano>to)continue;if(c.estrato&&ESTR_VALIDOS.has(c.estrato))pts+=(STATE.scoreConf[c.estrato]||0)/(c.divisor||1);}
+    if(a.estrato&&A3_MAIS.has(a.estrato))nA3++;if(a.estrato&&A4_MAIS.has(a.estrato))nA4++;
+    if(a.hasDiscente)discW++;}
+  for(const c of STATE.confs){if(soC&&c.natureza!=="COMPLETO")continue;if(c.ano===null||c.ano<from||c.ano>to)continue;
+    if(c.estrato&&ESTR_VALIDOS.has(c.estrato))pts+=(STATE.scoreConf[c.estrato]||0)/(c.divisor||1);
+    if(c.hasDiscente)discW++;}
   pts=Math.round(pts*1000)/1000;
   const oFrom=Y-1;
   const oConcl=(STATE.orientConcluidas||[]).filter(y=>y!==null&&y>=oFrom&&y<=Y).length;
   const oAnd=STATE.orientOngoing||0;const orient=oAnd+oConcl;
   const ic=b=>b?'<span class="ic ok">\u2713</span>':'<span class="ic no">\u2717</span>';
   const bloco=(titulo,art,verd,reqs)=>{const all=reqs.every(r=>r.ok);
-    let s='<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+'</p><div class="verdict '+(all?"ok":"no")+'">'+(all?"\u2713 "+verd.ok:"\u2717 "+verd.no)+'</div>';
-    for(const r of reqs)s+='<div class="req">'+ic(r.ok)+'<span class="desc">'+r.desc+'</span><span class="val">'+r.val+' <small>/ '+r.lim+'</small></span></div>';
-    return s+'</div>';};
+    let x='<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+'</p><div class="verdict '+(all?"ok":"no")+'">'+(all?"\u2713 "+verd.ok:"\u2717 "+verd.no)+'</div>';
+    for(const r of reqs)x+='<div class="req">'+ic(r.ok)+'<span class="desc">'+r.desc+'</span><span class="val">'+r.val+' <small>/ '+r.lim+'</small></span></div>';
+    return x+'</div>';};
   let h=bloco("Credenciamento","Art. 3\u00ba \u00b7 janela "+from+"\u2013"+to+" (\u00faltimos 36 meses)",
     {ok:"Atende ao crit\u00e9rio Pesquisa",no:"N\u00e3o atende ao crit\u00e9rio Pesquisa"},
     [{ok:pts>=3.5,desc:"Produ\u00e7\u00e3o em confer\u00eancias ou peri\u00f3dicos com estrato \u2265 B1 (pontos efetivos)",val:fmt(pts),lim:"\u2265 3.5"},
@@ -388,9 +425,10 @@ function renderCompliance(Y,soC){
     {ok:"Atende aos crit\u00e9rios verific\u00e1veis",no:"N\u00e3o atende aos crit\u00e9rios verific\u00e1veis"},
     [{ok:pts>=2.5,desc:"Produ\u00e7\u00e3o em confer\u00eancias ou peri\u00f3dicos com estrato \u2265 B1 (pontos efetivos)",val:fmt(pts),lim:"\u2265 2.5"},
      {ok:nA4>=1,desc:"Peri\u00f3dicos A4 ou superior (efetivamente publicados)",val:nA4,lim:"\u2265 1"},
-     {ok:orient>=2,desc:"Orienta\u00e7\u00f5es em andamento ou conclu\u00eddas nos \u00faltimos 24 meses ("+oAnd+" em andamento \u00b7 "+oConcl+" conclu\u00eddas)",val:orient,lim:"\u2265 2"}]);
-  h+='<div class="crit"><h3>Observa\u00e7\u00f5es</h3><p class="art">itens n\u00e3o verific\u00e1veis automaticamente pelo Lattes</p>'+
-     '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">Para recredenciamento (Art. 4\u00ba) resta o crit\u00e9rio <b>Doc\u00eancia</b> (ao menos uma disciplina nos \u00faltimos 24 meses) e a exig\u00eancia de pelo menos uma produ\u00e7\u00e3o em coautoria com discente do PPGI, n\u00e3o extra\u00edveis de forma confi\u00e1vel do Lattes, assim como o requisito de a produ\u00e7\u00e3o ser majoritariamente da \u00e1rea de Computa\u00e7\u00e3o e afins, que \u00e9 qualitativo. As orienta\u00e7\u00f5es s\u00e3o contadas a partir das se\u00e7\u00f5es de orienta\u00e7\u00f5es em andamento e conclu\u00eddas do Lattes (conclu\u00eddas dentro da janela de 24 meses, '+oFrom+'\u2013'+Y+'). A janela de 36 meses da pesquisa \u00e9 aproximada por ano-calend\u00e1rio ('+from+'\u2013'+to+'), pois o Lattes informa apenas o ano.</div></div>';
+     {ok:orient>=2,desc:"Orienta\u00e7\u00f5es em andamento ou conclu\u00eddas nos \u00faltimos 24 meses ("+oAnd+" em andamento \u00b7 "+oConcl+" conclu\u00eddas)",val:orient,lim:"\u2265 2"},
+     {ok:discW>=1,desc:"Ao menos uma produ\u00e7\u00e3o em coautoria com discente do PPGI (\u00faltimos 36 meses)",val:discW,lim:"\u2265 1"}]);
+  h+='<div class="crit"><h3>Observa\u00e7\u00f5es</h3><p class="art">crit\u00e9rios n\u00e3o verific\u00e1veis e notas de m\u00e9todo</p>'+
+     '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">Para recredenciamento (Art. 4\u00ba) resta o crit\u00e9rio <b>Doc\u00eancia</b> (ao menos uma disciplina nos \u00faltimos 24 meses), n\u00e3o extra\u00edvel do Lattes, e o requisito de a produ\u00e7\u00e3o ser majoritariamente da \u00e1rea de Computa\u00e7\u00e3o e afins, que \u00e9 qualitativo. A coautoria com discente \u00e9 aferida comparando os autores das produ\u00e7\u00f5es com os orientandos listados nas se\u00e7\u00f5es de orienta\u00e7\u00e3o do Lattes, o que cobre os discentes sob orienta\u00e7\u00e3o do docente. As orienta\u00e7\u00f5es s\u00e3o contadas por essas mesmas se\u00e7\u00f5es (conclu\u00eddas dentro da janela de 24 meses, '+oFrom+'\u2013'+Y+'). As janelas s\u00e3o aproximadas por ano-calend\u00e1rio (pesquisa em 36 meses: '+from+'\u2013'+to+'), pois o Lattes informa apenas o ano.</div></div>';
   el.innerHTML=h;
 }
 
