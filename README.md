@@ -33,8 +33,17 @@ A leitura das planilhas depende de a página ser servida por HTTP (GitHub Pages 
 
 Substitua os arquivos mantendo os mesmos nomes e as colunas descritas. Para periódicos, a ferramenta procura, em ordem de prioridade, `classificacoes_publicadas_computacao_2026.xlsx` (Computação) e `classificacoes_publicadas_interdisciplinar_2026.xlsx` (Interdisciplinar); aceita também `qualis-periodicos-computacao.xlsx`, `qualis-periodicos.xlsx`, `periodicos.xlsx` e `qualis-periodicos-interdisciplinar.xlsx`, `interdisciplinar.xlsx`. Para conferências, procura `qualis-conferencias.xlsx` ou `conferencias.xlsx`. Se você quiser incluir outras áreas de periódicos além dessas duas, me avise para acrescentar à lista.
 
-## Observações sobre a pontuação
+## Pontuação e verificação (Resolução nº 1/2025)
 
-- Os valores por estrato seguem o regimento do PPGI (A1 = 1, A2 = 0,875, A3 = 0,75, A4 = 0,625, B1 = 0,5). Os estratos abaixo de B1 estão preenchidos por extensão linear (passo 0,125) e sinalizados no editor; ajuste-os conforme o regimento.
-- As janelas móveis incluem o ano corrente: 2 anos = (ano−1 a ano), 3 anos = (ano−2 a ano), 5 anos = (ano−4 a ano).
-- Periódicos são classificados por ISSN. Conferências são classificadas por nome exato, por sigla presente no nome do evento e por similaridade de termos; casos aproximados são sinalizados para revisão.
+Os valores por estrato seguem a tabela do regimento, idêntica para periódicos e conferências: A1 = 1, A2 = 0,875, A3 = 0,75, A4 = 0,625, B1 = 0,5. O regimento define a tabela apenas até B1; os estratos abaixo de B1 (B2 a C) valem 0 e não contam, pois os limiares exigem estrato igual ou superior a B1. Todos os campos são editáveis, caso queira simular outra configuração.
+
+Divisão por coautoria: quando um trabalho é coautorado com outros docentes do PPGI, o regimento divide a pontuação do trabalho pelo número de coautores que são docentes do PPGI. A ferramenta lê os autores de cada publicação no XML do Lattes, identifica quais são docentes do PPGI (lista obtida em ic.ufal.br/pt-br/pos-graduacao/informatica/docentes, permanentes e colaboradores) e aplica a divisão. O número de coautores docentes de cada linha aparece na coluna "÷ PPGI" da tabela de revisão e pode ser corrigido manualmente; a pontuação efetiva é recalculada na hora.
+
+A etapa "Verificação do regimento" avalia o critério Pesquisa nos últimos 36 meses (aproximados pela janela de três anos, ano−2 a ano, já que o Lattes informa apenas o ano):
+
+- Credenciamento (Art. 3º): produção efetiva igual ou superior a 3,5 pontos em conferências ou periódicos com estrato igual ou superior a B1, e pelo menos dois periódicos A3 ou superior.
+- Recredenciamento (Art. 4º): produção efetiva igual ou superior a 2,5 pontos nas mesmas condições, e pelo menos um periódico A4 ou superior.
+
+Os critérios de Orientação e Docência (Art. 4º), a coautoria com discente e a exigência de produção majoritariamente na área de Computação e afins dependem de avaliação qualitativa e não são verificados automaticamente.
+
+As janelas móveis da ficha incluem o ano corrente: 2 anos = (ano−1 a ano), 3 anos = (ano−2 a ano), 5 anos = (ano−4 a ano). Periódicos são classificados por ISSN; conferências por nome exato, por sigla presente no nome do evento e por similaridade de termos, com os casos aproximados sinalizados para revisão.

@@ -10,7 +10,7 @@
   :root{
     --paper:#f3f5f7;--panel:#fff;--ink:#16202c;--muted:#5b6b7a;--faint:#8695a3;
     --line:#dbe2e8;--line-strong:#c2cdd7;--accent:#0d6e63;--accent-soft:#e3f1ef;
-    --warn:#b45309;--warn-soft:#fdf1e3;--err:#b3261e;--err-soft:#fbeceb;--ok:#166534;
+    --warn:#b45309;--warn-soft:#fdf1e3;--err:#b3261e;--err-soft:#fbeceb;--ok:#166534;--ok-soft:#e7f3ea;
     --shadow:0 1px 2px rgba(22,32,44,.04),0 8px 24px rgba(22,32,44,.05);
     --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -22,7 +22,7 @@
   header.masthead{border-bottom:2px solid var(--ink);padding-bottom:18px;margin-bottom:28px}
   .masthead .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 6px}
   .masthead h1{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.12;margin:0;letter-spacing:-.01em}
-  .masthead .sub{color:var(--muted);margin:8px 0 0;font-size:14px;max-width:76ch}
+  .masthead .sub{color:var(--muted);margin:8px 0 0;font-size:14px;max-width:78ch}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:22px 24px;margin:0 0 20px}
   .panel-head{display:flex;align-items:baseline;gap:12px;margin:0 0 16px}
   .step{font-family:var(--mono);font-size:12px;font-weight:600;color:#fff;background:var(--ink);border-radius:6px;padding:3px 8px;line-height:1;flex:0 0 auto}
@@ -33,12 +33,19 @@
   .btn:hover{filter:brightness(1.06)}
   .drop p{color:var(--muted);font-size:13px;margin:12px 0 0}
   .drop input{display:none}
+  details.howto{margin:16px 0 0;border:1px solid var(--line);border-radius:9px;background:#fbfdfe;padding:0 14px}
+  details.howto summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent);padding:12px 0;list-style:none}
+  details.howto summary::-webkit-details-marker{display:none}
+  details.howto summary::before{content:"▸ ";color:var(--faint)}
+  details.howto[open] summary::before{content:"▾ "}
+  details.howto ol{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:13.5px}
+  details.howto li{margin:0 0 6px}
   .files{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
   .files li{display:flex;align-items:center;gap:10px;font-size:13.5px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:#fbfdfe}
   .files .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:5px;flex:0 0 auto}
   .tag.lattes{background:#e7eef7;color:#1f4e79}.tag.per{background:var(--accent-soft);color:var(--accent)}.tag.conf{background:#f0ecf9;color:#5b3f9e}
   .files .name{font-family:var(--mono);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .files .meta{margin-left:auto;color:var(--faint);font-size:12px;flex:0 0 auto}
+  .files .meta{margin-left:auto;color:var(--faint);font-size:12px;flex:0 0 auto;text-align:right}
   .files .state-ok{color:var(--ok)}.files .state-no{color:var(--err)}
   .cfg{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-end}
   .field{display:flex;flex-direction:column;gap:5px}
@@ -56,12 +63,13 @@
   .score-row{display:flex;align-items:center;gap:10px;margin:0 0 7px}
   .score-row .estr{font-family:var(--mono);font-weight:600;font-size:13px;width:52px;flex:0 0 auto;background:#f1f4f6;border-radius:5px;text-align:center;padding:5px 0}
   .score-row input{font-family:var(--mono);font-size:14px;width:92px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--ink)}
-  .score-row .flag{font-size:11px;color:var(--warn);font-family:var(--mono)}
-  .score-row .conf{font-size:11px;color:var(--faint);font-family:var(--mono)}
+  .score-row .flag{font-size:11px;color:var(--faint);font-family:var(--mono)}
+  .score-row .conf{font-size:11px;color:var(--accent);font-family:var(--mono)}
   .ficha{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
   @media (max-width:820px){.ficha{grid-template-columns:repeat(2,1fr)}}
   .card{border:1px solid var(--line);border-radius:11px;padding:16px 16px 15px;background:#fff;position:relative;overflow:hidden}
   .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+  .card.win3::before{background:var(--warn)}
   .card .clabel{font-size:12px;color:var(--muted);font-weight:600;margin:0 0 2px}
   .card .cyears{font-family:var(--mono);font-size:11px;color:var(--faint);margin:0 0 12px}
   .card .total{font-family:var(--mono);font-size:32px;font-weight:600;line-height:1;letter-spacing:-.02em}
@@ -77,13 +85,27 @@
   .estr-pill{font-family:var(--mono);font-weight:600;font-size:12px;padding:2px 7px;border-radius:5px;background:#eef2f5}
   .row-review{background:#fdf7ec}.row-review:hover{background:#fbf0dc}
   select.estr-sel{font-family:var(--mono);font-size:12.5px;padding:4px 6px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--ink)}
+  input.div-inp{font-family:var(--mono);font-size:12.5px;width:50px;padding:4px 6px;border:1px solid var(--line-strong);border-radius:6px;background:#fff;color:var(--ink);text-align:right}
   .badge-review{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--warn);border:1px solid #f0d9b5;border-radius:4px;padding:1px 5px;margin-left:6px}
-  .ttl{max-width:360px}.ven{color:var(--muted);font-size:12px}
+  .ttl{max-width:320px}.ven{color:var(--muted);font-size:12px}
   .subhead{font-family:var(--serif);font-size:16px;font-weight:600;margin:26px 0 10px}
   .muted-note{color:var(--faint);font-size:12.5px;margin:8px 0 0}
   .count-chip{font-family:var(--mono);font-size:11px;color:var(--muted);background:#f1f4f6;border-radius:20px;padding:3px 10px}
   .score-empty{color:var(--faint);font-size:13px;font-style:italic}
+  .crit{border:1px solid var(--line);border-radius:11px;padding:18px 20px;margin:0 0 16px;background:#fff}
+  .crit h3{font-family:var(--serif);font-size:17px;font-weight:600;margin:0 0 4px}
+  .crit .art{font-family:var(--mono);font-size:11px;color:var(--faint);margin:0 0 14px}
+  .verdict{display:inline-flex;align-items:center;gap:7px;font-weight:600;font-size:13px;border-radius:20px;padding:4px 12px;margin:0 0 14px}
+  .verdict.ok{background:var(--ok-soft);color:var(--ok)}.verdict.no{background:var(--err-soft);color:var(--err)}
+  .req{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+  .req .ic{font-family:var(--mono);font-weight:700;width:20px;flex:0 0 auto;text-align:center}
+  .req .ic.ok{color:var(--ok)}.req .ic.no{color:var(--err)}
+  .req .desc{font-size:13.5px}
+  .req .val{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--ink);flex:0 0 auto}
+  .req .val small{color:var(--faint)}
+  .crit .obs{font-size:12.5px;color:var(--muted);margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line)}
   footer.foot{color:var(--faint);font-size:12px;margin-top:36px;border-top:1px solid var(--line);padding-top:14px}
+  code{font-family:var(--mono);font-size:12px;background:#f1f4f6;padding:1px 5px;border-radius:4px}
 </style>
 </head>
 <body>
@@ -91,7 +113,7 @@
   <header class="masthead">
     <p class="kicker">Programa de Pós-Graduação em Informática · IC/UFAL</p>
     <h1>Calculadora de Pontuação de Publicações</h1>
-    <p class="sub">As classificações Qualis de periódicos e de conferências são lidas de planilhas do próprio repositório. Envie o arquivo XML exportado do Lattes para calcular a pontuação no ano corrente e nas janelas móveis de 2, 3 e 5 anos. Tudo é processado localmente no navegador.</p>
+    <p class="sub">Cruza o currículo Lattes com as classificações Qualis (periódicos de Computação e Interdisciplinar, e conferências de Computação) e aplica o regimento do PPGI (Resolução nº 1/2025), incluindo a divisão de pontos por coautores docentes do PPGI e a verificação dos critérios de credenciamento e recredenciamento. Tudo é processado localmente no navegador.</p>
   </header>
 
   <section class="panel">
@@ -101,6 +123,16 @@
       <input type="file" id="file" accept=".xml,.zip">
       <p>Envie o arquivo <b>.xml</b> (ou o <b>.zip</b> que o contém) exportado pela Plataforma Lattes. Leitura exata e local; nada sai do seu computador.</p>
     </div>
+    <details class="howto">
+      <summary>Como obter o XML do Lattes</summary>
+      <ol>
+        <li>Acesse a Plataforma Lattes (<code>lattes.cnpq.br</code>) e entre no seu currículo com login e senha.</li>
+        <li>No topo do currículo, clique em <b>Atualizar currículo</b> (ou abra o editor do currículo).</li>
+        <li>No menu, escolha <b>Exportar</b> e selecione o formato <b>XML</b>. Confirme a exportação.</li>
+        <li>Será baixado um arquivo <b>.zip</b> (por exemplo, <code>curriculo.zip</code>) contendo o <code>curriculo.xml</code>.</li>
+        <li>Envie aqui esse <b>.zip</b> diretamente, ou o <b>.xml</b> extraído dele. O PDF impresso do currículo não serve, pois não contém dados estruturados.</li>
+      </ol>
+    </details>
     <div id="uploadMsg"></div>
     <ul class="files" id="fileList"></ul>
   </section>
@@ -116,8 +148,8 @@
   </section>
 
   <section class="panel">
-    <div class="panel-head"><span class="step">3</span><h2>Pontuação por estrato</h2><span class="hint">regimento do PPGI · editável</span></div>
-    <div class="banner" id="scoreBanner"><span class="ico">i</span><span><b>Confira os estratos abaixo de B1.</b> O regimento fornecido define A1 a B1 (1 · 0,875 · 0,75 · 0,625 · 0,5). Os valores de B2 em diante estão preenchidos por extensão linear (passo 0,125) e sinalizados. Ajuste qualquer valor: o cálculo é refeito na hora.</span></div>
+    <div class="panel-head"><span class="step">3</span><h2>Pontuação por estrato</h2><span class="hint">Resolução nº 1/2025 · editável</span></div>
+    <div class="banner" id="scoreBanner"><span class="ico">i</span><span>O regimento define a tabela apenas de <b>A1 a B1</b> (1 · 0,875 · 0,75 · 0,625 · 0,5), idêntica para periódicos e conferências. Os estratos <b>abaixo de B1</b> (B2 a C) valem <b>0</b> e não contam para os limiares (que exigem estrato igual ou superior a B1). Os campos são editáveis, caso queira simular outra configuração.</span></div>
     <div class="score-grid">
       <div class="score-col"><h3>Periódicos / Revistas</h3><div id="scorePer"></div></div>
       <div class="score-col"><h3>Conferências</h3><div id="scoreConf"></div></div>
@@ -125,38 +157,24 @@
   </section>
 
   <section class="panel">
-    <div class="panel-head"><span class="step">4</span><h2>Ficha de pontuação</h2></div>
+    <div class="panel-head"><span class="step">4</span><h2>Ficha de pontuação</h2><span class="hint">pontos efetivos (÷ coautores PPGI)</span></div>
     <div id="results"><p class="score-empty">Envie o XML do Lattes para calcular.</p></div>
   </section>
 
+  <section class="panel">
+    <div class="panel-head"><span class="step">5</span><h2>Verificação do regimento</h2><span class="hint">Resolução nº 1/2025 · Art. 3º e 4º</span></div>
+    <div id="compliance"><p class="score-empty">Envie o XML do Lattes para verificar.</p></div>
+  </section>
+
   <footer class="foot">
-    Bases Qualis: <b id="baseInfo">carregando…</b>. Servido como página estática (GitHub Pages); as planilhas são lidas do mesmo diretório. Processamento local; a internet é usada apenas para carregar as bibliotecas de leitura (JSZip e SheetJS).
+    Bases Qualis: <b id="baseInfo">carregando…</b>. Pontuação e critérios conforme a Resolução nº 1/2025 do PPGI/UFAL. Lista de docentes do PPGI obtida em ic.ufal.br. Página estática (GitHub Pages); processamento local.
   </footer>
 </div>
 
 <script>
 "use strict";
 
-/* estratos canônicos (editor sempre completo) */
-const ALL_ESTR=["A1","A2","A3","A4","B1","B2","B3","B4","B5","C"];
-const PER_ESTR=ALL_ESTR, CONF_ESTR=ALL_ESTR;
-const REG={
-  per:{A1:1,A2:0.875,A3:0.75,A4:0.625,B1:0.5,B2:0.375,B3:0.25,B4:0.125,B5:0,C:0},
-  conf:{A1:1,A2:0.875,A3:0.75,A4:0.625,B1:0.5,B2:0.375,B3:0.25,B4:0.125,B5:0,C:0}
-};
-const CONFIRMADO=new Set(["A1","A2","A3","A4","B1"]);
-
-/* planilhas Qualis aceitas no repositório.
-   Periódicos: várias áreas; Computação tem prioridade, Interdisciplinar completa os ISSN ausentes. */
-const PER_SOURCES=[
-  {area:"Comp.",names:["classificacoes_publicadas_computacao_2026.xlsx","qualis-periodicos-computacao.xlsx","qualis-periodicos.xlsx","periodicos.xlsx"]},
-  {area:"Interd.",names:["classificacoes_publicadas_interdisciplinar_2026.xlsx","qualis-periodicos-interdisciplinar.xlsx","interdisciplinar.xlsx"]}
-];
-const CONF_FILES=["qualis-conferencias.xlsx","conferencias.xlsx"];
-
-const STATE={articles:[],confs:[],journalMap:{},journalArea:{},confList:[],scorePer:{},scoreConf:{},
-  file:null,basesOk:false,perSources:[],confName:null,loaded:false,_rows:[]};
-
+/* ===== utilidades ===== */
 function norm(s){return (s||"").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();}
 function normIssn(s){return (s||"").toString().toUpperCase().replace(/[^0-9X]/g,"").slice(0,8);}
 function toInt(v){const n=parseInt(v,10);return isNaN(n)?null:n;}
@@ -165,119 +183,92 @@ function fmt(n){return (Math.round(n*1000)/1000).toString();}
 function estOrder(e){e=(e||"").toString().toUpperCase().trim();const m=e.match(/^([A-C])\s*([0-9]?)/);if(!m)return 999;const l={A:0,B:100,C:200}[m[1]]??900;return l+(m[2]?parseInt(m[2],10):0);}
 function sortEstratos(arr){return [...new Set(arr.filter(Boolean).map(x=>x.toString().toUpperCase().trim()))].sort((a,b)=>estOrder(a)-estOrder(b)||a.localeCompare(b));}
 
-/* ===== carregar bases Qualis do repositório ===== */
-async function fetchWb(names){
-  for(const nm of names){
-    try{const r=await fetch(nm,{cache:"no-store"});if(!r.ok)continue;
-      const buf=await r.arrayBuffer();return {wb:XLSX.read(new Uint8Array(buf),{type:"array"}),name:nm};
-    }catch(e){/* tenta próximo */}
-  }
-  return null;
-}
+/* ===== regimento (Resolução nº 1/2025): tabela só de A1 a B1; abaixo de B1 = 0 ===== */
+const ALL_ESTR=["A1","A2","A3","A4","B1","B2","B3","B4","B5","C"];
+const PER_ESTR=ALL_ESTR, CONF_ESTR=ALL_ESTR;
+const REG={
+  per:{A1:1,A2:0.875,A3:0.75,A4:0.625,B1:0.5,B2:0,B3:0,B4:0,B5:0,C:0},
+  conf:{A1:1,A2:0.875,A3:0.75,A4:0.625,B1:0.5,B2:0,B3:0,B4:0,B5:0,C:0}
+};
+const CONFIRMADO=new Set(["A1","A2","A3","A4","B1"]);
+const ESTR_VALIDOS=new Set(["A1","A2","A3","A4","B1"]); /* >= B1 conta para os limiares */
+const A3_MAIS=new Set(["A1","A2","A3"]);
+const A4_MAIS=new Set(["A1","A2","A3","A4"]);
+const LIM={cred:{pontos:3.5,minPeriodicos:2,minEstr:A3_MAIS,minLabel:"A3 ou superior"},
+          recred:{pontos:2.5,minPeriodicos:1,minEstr:A4_MAIS,minLabel:"A4 ou superior"}};
+
+/* docentes do PPGI/UFAL (permanentes + colaboradores) — divisão de pontos por coautoria.
+   Fonte: ic.ufal.br/pt-br/pos-graduacao/informatica/docentes */
+const DOCENTES_PPGI=["Alan Pedro da Silva","Álvaro Alvares de Carvalho César Sobrinho","André Luiz Lins de Aquino","André Magno Costa de Araújo","Aydano Pamponet Machado","Baldoino Fonseca dos Santos Neto","Bruno Almeida Pimentel","Bruno Costa e Silva Nogueira","Diego Dermeval Medeiros da Cunha Matos","Erick de Andrade Barboza","Evandro de Barros Costa","Fabiane da Silva Queiroz","Glauber Rodrigues Leite","Ig Ibert Bittencourt Santana Pinto","Ícaro Bezerra Queiroz de Araújo","Leandro Dias da Silva","Lucas Benevides Viana de Amorim","Marcelo Costa Oliveira","Márcio de Medeiros Ribeiro","Maurício Beltrão de Rossiter Corrêa","Ranilson Oscar Araújo Paiva","Rian Gabriel Santos Pinheiro","Rodrigo Gusmão de Carvalho Rocha","Thales Miranda de Almeida Vieira","Thiago Damasceno Cordeiro","Tiago Figueiredo Vieira","Fábio José Coutinho da Silva","Gustavo Henrique Ferreira de Miranda Oliveira","Rafael de Amorim Silva","Xu Yang"];
+const STOP=new Set(["de","da","do","dos","das","e"]);
+function nameTokens(s){return norm(s).split(" ").filter(w=>w.length>1&&!STOP.has(w));}
+const DOC_TOK=DOCENTES_PPGI.map(n=>{const t=nameTokens(n);return {nome:n,first:t[0],last:t[t.length-1]};});
+function docenteDe(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size)return null;for(const d of DOC_TOK){if(d.first&&d.last&&t.has(d.first)&&t.has(d.last))return d.nome;}return null;}
+function coautoresPpgi(autores){const s=new Set();for(const a of (autores||[])){const d=docenteDe(a);if(d)s.add(d);}return [...s];}
+
+/* planilhas Qualis: Computação tem prioridade, Interdisciplinar completa os ISSN ausentes */
+const PER_SOURCES=[
+  {area:"Comp.",names:["classificacoes_publicadas_computacao_2026.xlsx","qualis-periodicos-computacao.xlsx","qualis-periodicos.xlsx","periodicos.xlsx"]},
+  {area:"Interd.",names:["classificacoes_publicadas_interdisciplinar_2026.xlsx","qualis-periodicos-interdisciplinar.xlsx","interdisciplinar.xlsx"]}
+];
+const CONF_FILES=["qualis-conferencias.xlsx","conferencias.xlsx"];
+
+const STATE={articles:[],confs:[],journalMap:{},journalArea:{},confList:[],scorePer:{},scoreConf:{},
+  file:null,ownerName:"",basesOk:false,perSources:[],confName:null,loaded:false,_rows:[]};
+
+/* ===== bases Qualis do repositório ===== */
+async function fetchWb(names){for(const nm of names){try{const r=await fetch(nm,{cache:"no-store"});if(!r.ok)continue;return {wb:XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:"array"}),name:nm};}catch(e){}}return null;}
 function headerIndex(rows,re){for(let i=0;i<Math.min(rows.length,15);i++){if(re.test(rows[i].map(x=>x==null?"":x).join(" ")))return i;}return -1;}
-function parsePeriodicos(wb){
-  for(const sh of wb.SheetNames){
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,blankrows:false,defval:""});
-    const hi=headerIndex(rows,/issn/i);if(hi<0)continue;
-    const H=rows[hi].map(x=>norm(x));
-    const ci=H.findIndex(h=>/issn/.test(h));
-    const ce=H.findIndex(h=>/estrato|qualis|classif|conceito/.test(h));
-    if(ci<0||ce<0)continue;
-    const map={};for(const r of rows.slice(hi+1)){const issn=normIssn(r[ci]);const e=(r[ce]||"").toString().trim().toUpperCase();if(issn&&e)map[issn]=e;}
-    if(Object.keys(map).length)return map;
-  }
-  return null;
-}
-function parseConferencias(wb){
-  for(const sh of wb.SheetNames){
-    const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,blankrows:false,defval:""});
-    const hi=headerIndex(rows,/sigla|evento|t[ií]tulo/i);if(hi<0)continue;
-    const H=rows[hi].map(x=>norm(x));
-    const cs=H.findIndex(h=>/sigla/.test(h));
-    const cn=H.findIndex(h=>/titulo|título|nome|evento/.test(h));
-    const ce=H.findIndex(h=>/estrato|qualis|classif|conceito/.test(h));
-    if(ce<0||(cs<0&&cn<0))continue;
-    const list=[];for(const r of rows.slice(hi+1)){const sig=cs>=0?(r[cs]||"").toString().trim():"";const nome=cn>=0?(r[cn]||"").toString().trim():"";const e=(r[ce]||"").toString().trim().toUpperCase();if((sig||nome)&&e)list.push({name:nome,nameNorm:norm(nome),sigla:sig,siglaNorm:norm(sig),estrato:e});}
-    if(list.length)return list;
-  }
-  return null;
-}
+function parsePeriodicos(wb){for(const sh of wb.SheetNames){const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,blankrows:false,defval:""});const hi=headerIndex(rows,/issn/i);if(hi<0)continue;const H=rows[hi].map(x=>norm(x));const ci=H.findIndex(h=>/issn/.test(h)),ce=H.findIndex(h=>/estrato|qualis|classif|conceito/.test(h));if(ci<0||ce<0)continue;const map={};for(const r of rows.slice(hi+1)){const issn=normIssn(r[ci]);const e=(r[ce]||"").toString().trim().toUpperCase();if(issn&&e)map[issn]=e;}if(Object.keys(map).length)return map;}return null;}
+function parseConferencias(wb){for(const sh of wb.SheetNames){const rows=XLSX.utils.sheet_to_json(wb.Sheets[sh],{header:1,blankrows:false,defval:""});const hi=headerIndex(rows,/sigla|evento|t[ií]tulo/i);if(hi<0)continue;const H=rows[hi].map(x=>norm(x));const cs=H.findIndex(h=>/sigla/.test(h)),cn=H.findIndex(h=>/titulo|nome|evento/.test(h)),ce=H.findIndex(h=>/estrato|qualis|classif|conceito/.test(h));if(ce<0||(cs<0&&cn<0))continue;const list=[];for(const r of rows.slice(hi+1)){const sig=cs>=0?(r[cs]||"").toString().trim():"";const nome=cn>=0?(r[cn]||"").toString().trim():"";const e=(r[ce]||"").toString().trim().toUpperCase();if((sig||nome)&&e)list.push({name:nome,nameNorm:norm(nome),sigla:sig,siglaNorm:norm(sig),estrato:e});}if(list.length)return list;}return null;}
 async function loadBases(){
-  STATE.journalMap={};STATE.journalArea={};STATE.perSources=[];
-  let msg=[];
-  // periódicos: lê cada área na ordem de prioridade; primeiro a definir um ISSN prevalece
-  for(const src of PER_SOURCES){
-    const got=await fetchWb(src.names);if(!got)continue;
-    const m=parsePeriodicos(got.wb);if(!m){msg.push(got.name+" sem colunas ISSN/Estrato");continue;}
-    let add=0;for(const issn in m){if(!(issn in STATE.journalMap)){STATE.journalMap[issn]=m[issn];STATE.journalArea[issn]=src.area;add++;}}
-    STATE.perSources.push({area:src.area,name:got.name,count:add});
-  }
-  const conf=await fetchWb(CONF_FILES);
-  if(conf){const l=parseConferencias(conf.wb);if(l){STATE.confList=l;STATE.confName=conf.name;}else{msg.push("planilha de conferências sem colunas Sigla/Estrato");}}
-  const perOk=STATE.perSources.length>0&&Object.keys(STATE.journalMap).length>0;
-  const confOk=STATE.confList.length>0;
-  STATE.basesOk=perOk&&confOk;
-  const info=document.getElementById("baseInfo");
-  if(STATE.basesOk){
-    const partes=STATE.perSources.map(s=>s.area+" "+s.count).join(" + ");
-    info.textContent=Object.keys(STATE.journalMap).length+" periódicos ("+partes+") · "+STATE.confList.length+" conferências ("+STATE.confName+")";
-  }else{
-    info.textContent="não carregadas";
-    if(!perOk)msg.unshift("nenhuma planilha de periódicos encontrada ("+PER_SOURCES[0].names[0]+")");
-    if(!confOk)msg.push("planilha de conferências não encontrada ("+CONF_FILES[0]+")");
-    document.getElementById("uploadMsg").innerHTML='<div class="banner err"><span class="ico">!</span><span><b>Não foi possível ler as planilhas Qualis do repositório:</b> '+esc(msg.join("; "))+'. Coloque as planilhas ao lado do index.html e sirva a página via GitHub Pages ou um servidor local (o navegador bloqueia leitura de arquivos via file://).</span></div>';
-  }
-  buildScoreTables();
-  return STATE.basesOk;
+  STATE.journalMap={};STATE.journalArea={};STATE.perSources=[];let msg=[];
+  for(const src of PER_SOURCES){const got=await fetchWb(src.names);if(!got)continue;const m=parsePeriodicos(got.wb);if(!m){msg.push(got.name+" sem colunas ISSN/Estrato");continue;}let add=0;for(const issn in m){if(!(issn in STATE.journalMap)){STATE.journalMap[issn]=m[issn];STATE.journalArea[issn]=src.area;add++;}}STATE.perSources.push({area:src.area,name:got.name,count:add});}
+  const conf=await fetchWb(CONF_FILES);if(conf){const l=parseConferencias(conf.wb);if(l){STATE.confList=l;STATE.confName=conf.name;}else msg.push("planilha de conferências sem colunas Sigla/Estrato");}
+  const perOk=STATE.perSources.length>0&&Object.keys(STATE.journalMap).length>0, confOk=STATE.confList.length>0;
+  STATE.basesOk=perOk&&confOk;const info=document.getElementById("baseInfo");
+  if(STATE.basesOk){info.textContent=Object.keys(STATE.journalMap).length+" periódicos ("+STATE.perSources.map(s=>s.area+" "+s.count).join(" + ")+") · "+STATE.confList.length+" conferências ("+STATE.confName+")";}
+  else{info.textContent="não carregadas";if(!perOk)msg.unshift("nenhuma planilha de periódicos encontrada ("+PER_SOURCES[0].names[0]+")");if(!confOk)msg.push("planilha de conferências não encontrada ("+CONF_FILES[0]+")");document.getElementById("uploadMsg").innerHTML='<div class="banner err"><span class="ico">!</span><span><b>Não foi possível ler as planilhas Qualis do repositório:</b> '+esc(msg.join("; "))+'. Coloque as planilhas ao lado do index.html e sirva a página via GitHub Pages ou um servidor local (o navegador bloqueia leitura de arquivos via file://).</span></div>';}
+  buildScoreTables();return STATE.basesOk;
 }
 
-/* ===== upload do Lattes (apenas XML/ZIP) ===== */
+/* ===== upload (apenas XML/ZIP) ===== */
 document.getElementById("file").addEventListener("change",async ev=>{
-  const f=ev.target.files[0];if(!f)return;
-  const ext=(f.name.split(".").pop()||"").toLowerCase();
-  const msg=document.getElementById("uploadMsg");
-  if(ext==="pdf"){msg.innerHTML='<div class="banner"><span class="ico">i</span><span>Este arquivo é um PDF. Exporte o currículo em <b>XML</b> na Plataforma Lattes (menu <b>Exportar</b>) e envie o arquivo <b>.xml</b> ou o <b>.zip</b> que o contém. O PDF impresso não é lido.</span></div>';return;}
+  const f=ev.target.files[0];if(!f)return;const ext=(f.name.split(".").pop()||"").toLowerCase();const msg=document.getElementById("uploadMsg");
+  if(ext==="pdf"){msg.innerHTML='<div class="banner"><span class="ico">i</span><span>Este arquivo é um PDF. Exporte o currículo em <b>XML</b> na Plataforma Lattes (menu <b>Exportar</b>) e envie o <b>.xml</b> ou o <b>.zip</b> que o contém. Veja o passo a passo acima.</span></div>';return;}
   if(!["xml","zip"].includes(ext)){msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Formato não suportado. Envie o <b>.xml</b> (ou <b>.zip</b>) exportado do Lattes.</span></div>';return;}
-  msg.innerHTML="";
-  STATE.articles=[];STATE.confs=[];STATE.loaded=false;STATE.file=f.name;
+  msg.innerHTML="";STATE.articles=[];STATE.confs=[];STATE.loaded=false;STATE.file=f.name;
   try{
-    if(ext==="zip"){const zip=await JSZip.loadAsync(await f.arrayBuffer());let found=false;
-      for(const zn of Object.keys(zip.files)){if(zn.toLowerCase().endsWith(".xml")){const t=decodeXml(await zip.files[zn].async("arraybuffer"));if(looksLattes(t)){parseLattesXml(t);found=true;break;}}}
-      if(!found)throw new Error("nenhum XML de Lattes dentro do .zip");}
+    if(ext==="zip"){const zip=await JSZip.loadAsync(await f.arrayBuffer());let ok=false;for(const zn of Object.keys(zip.files)){if(zn.toLowerCase().endsWith(".xml")){const t=decodeXml(await zip.files[zn].async("arraybuffer"));if(looksLattes(t)){parseLattesXml(t);ok=true;break;}}}if(!ok)throw new Error("nenhum XML de Lattes dentro do .zip");}
     else{const t=decodeXml(await f.arrayBuffer());if(!looksLattes(t))throw new Error("o XML não parece um currículo Lattes");parseLattesXml(t);}
   }catch(e){msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Falha ao ler o Lattes: '+esc(e.message)+'</span></div>';return;}
   STATE.loaded=true;renderFileList();recompute();
 });
-
 function decodeXml(buffer){const b=new Uint8Array(buffer);let head="";for(let i=0;i<Math.min(b.length,300);i++)head+=String.fromCharCode(b[i]);let enc="utf-8";const m=head.match(/encoding\s*=\s*["']([^"']+)["']/i);if(m)enc=m[1].toLowerCase();if(enc.includes("8859")||enc.includes("latin")||enc.includes("1252"))enc="iso-8859-1";try{return new TextDecoder(enc).decode(buffer);}catch(e){try{return new TextDecoder("iso-8859-1").decode(buffer);}catch(_){return new TextDecoder("utf-8").decode(buffer);}}}
 function looksLattes(t){return /CURRICULO-VITAE|DADOS-GERAIS|ARTIGOS-PUBLICADOS|PRODUCAO-BIBLIOGRAFICA/i.test(t.slice(0,20000));}
+function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
 function parseLattesXml(xml){
   STATE.articles=[];STATE.confs=[];
   const doc=new DOMParser().parseFromString(xml,"application/xml");
+  const dg=doc.getElementsByTagName("DADOS-GERAIS")[0];STATE.ownerName=dg?(dg.getAttribute("NOME-COMPLETO")||""):"";
   for(const a of doc.getElementsByTagName("ARTIGO-PUBLICADO")){
-    const b=a.getElementsByTagName("DADOS-BASICOS-DO-ARTIGO")[0];const d=a.getElementsByTagName("DETALHAMENTO-DO-ARTIGO")[0];
-    if(!b)continue;const ano=toInt(b.getAttribute("ANO-DO-ARTIGO"));if(ano===null)continue;
-    const issn=d?(d.getAttribute("ISSN")||""):"";
-    STATE.articles.push({ano,titulo:b.getAttribute("TITULO-DO-ARTIGO")||"",periodico:d?(d.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA")||""):"",issn,issnNorm:normIssn(issn),estrato:null,matched:false,matchType:null,override:null});
+    const b=a.getElementsByTagName("DADOS-BASICOS-DO-ARTIGO")[0];const d=a.getElementsByTagName("DETALHAMENTO-DO-ARTIGO")[0];if(!b)continue;
+    const ano=toInt(b.getAttribute("ANO-DO-ARTIGO"));if(ano===null)continue;
+    const issn=d?(d.getAttribute("ISSN")||""):"";const aut=autoresDe(a);const cp=coautoresPpgi(aut);const div=Math.max(1,cp.length);
+    STATE.articles.push({ano,titulo:b.getAttribute("TITULO-DO-ARTIGO")||"",periodico:d?(d.getAttribute("TITULO-DO-PERIODICO-OU-REVISTA")||""):"",issn,issnNorm:normIssn(issn),autores:aut,coautoresPpgi:cp,divisorAuto:div,divisor:div,estrato:null,matched:false,matchType:null,override:null});
   }
   for(const t of doc.getElementsByTagName("TRABALHO-EM-EVENTOS")){
-    const b=t.getElementsByTagName("DADOS-BASICOS-DO-TRABALHO")[0];const d=t.getElementsByTagName("DETALHAMENTO-DO-TRABALHO")[0];
-    if(!b)continue;const ano=toInt(b.getAttribute("ANO-DO-TRABALHO"));if(ano===null)continue;
-    const evento=d?(d.getAttribute("NOME-DO-EVENTO")||d.getAttribute("TITULO-DOS-ANAIS-OU-PROCEEDINGS")||""):"";
-    STATE.confs.push({ano,titulo:b.getAttribute("TITULO-DO-TRABALHO")||"",evento,natureza:(b.getAttribute("NATUREZA")||"").toUpperCase(),estrato:null,matched:false,matchType:null,override:null});
+    const b=t.getElementsByTagName("DADOS-BASICOS-DO-TRABALHO")[0];const d=t.getElementsByTagName("DETALHAMENTO-DO-TRABALHO")[0];if(!b)continue;
+    const ano=toInt(b.getAttribute("ANO-DO-TRABALHO"));if(ano===null)continue;
+    const evento=d?(d.getAttribute("NOME-DO-EVENTO")||d.getAttribute("TITULO-DOS-ANAIS-OU-PROCEEDINGS")||""):"";const aut=autoresDe(t);const cp=coautoresPpgi(aut);const div=Math.max(1,cp.length);
+    STATE.confs.push({ano,titulo:b.getAttribute("TITULO-DO-TRABALHO")||"",evento,natureza:(b.getAttribute("NATUREZA")||"").toUpperCase(),autores:aut,coautoresPpgi:cp,divisorAuto:div,divisor:div,estrato:null,matched:false,matchType:null,override:null});
   }
 }
 
 /* ===== correspondência ===== */
 function matchAll(){
-  for(const a of STATE.articles){
-    if(a.override){a.estrato=a.override;a.matched=true;a.matchType="manual";a.area=null;continue;}
-    const e=a.issnNorm?STATE.journalMap[a.issnNorm]:null;a.estrato=e||null;a.matched=!!e;a.matchType=e?"issn":null;a.area=e?STATE.journalArea[a.issnNorm]:null;
-  }
-  for(const c of STATE.confs){
-    if(c.override){c.estrato=c.override;c.matched=true;c.matchType="manual";continue;}
-    const r=matchConf(c.evento);c.estrato=r.estrato;c.matched=r.estrato!==null;c.matchType=r.type;
-  }
+  for(const a of STATE.articles){if(a.override){a.estrato=a.override;a.matched=true;a.matchType="manual";a.area=null;continue;}const e=a.issnNorm?STATE.journalMap[a.issnNorm]:null;a.estrato=e||null;a.matched=!!e;a.matchType=e?"issn":null;a.area=e?STATE.journalArea[a.issnNorm]:null;}
+  for(const c of STATE.confs){if(c.override){c.estrato=c.override;c.matched=true;c.matchType="manual";continue;}const r=matchConf(c.evento);c.estrato=r.estrato;c.matched=r.estrato!==null;c.matchType=r.type;}
 }
 function matchConf(evento){
   const en=norm(evento);if(!en)return {estrato:null,type:null};
@@ -285,62 +276,54 @@ function matchConf(evento){
   const tk=new Set(en.split(" "));
   b=STATE.confList.find(q=>q.siglaNorm&&q.siglaNorm.length>=3&&tk.has(q.siglaNorm));if(b)return {estrato:b.estrato,type:"sigla"};
   const A=new Set(en.split(" ").filter(w=>w.length>2));
-  if(A.size){let best=null,bestJ=0;
-    for(const q of STATE.confList){const B=new Set(q.nameNorm.split(" ").filter(w=>w.length>2));if(!B.size)continue;
-      let inter=0;for(const w of A)if(B.has(w))inter++;const j=inter/new Set([...A,...B]).size;if(j>bestJ){bestJ=j;best=q;}}
-    if(best&&bestJ>=0.6)return {estrato:best.estrato,type:"aprox"};}
+  if(A.size){let best=null,bestJ=0;for(const q of STATE.confList){const B=new Set(q.nameNorm.split(" ").filter(w=>w.length>2));if(!B.size)continue;let inter=0;for(const w of A)if(B.has(w))inter++;const j=inter/new Set([...A,...B]).size;if(j>bestJ){bestJ=j;best=q;}}if(best&&bestJ>=0.6)return {estrato:best.estrato,type:"aprox"};}
   return {estrato:null,type:null};
 }
 
 /* ===== editor de pontuação (todos os estratos) ===== */
-function buildScoreTables(){
-  renderScore("scorePer","per",PER_ESTR,STATE.scorePer,REG.per);
-  renderScore("scoreConf","conf",CONF_ESTR,STATE.scoreConf,REG.conf);
-}
-function renderScore(elId,kind,estratos,store,reg){
-  const el=document.getElementById(elId);el.innerHTML="";
+function buildScoreTables(){renderScore("scorePer","per",PER_ESTR,STATE.scorePer,REG.per);renderScore("scoreConf","conf",CONF_ESTR,STATE.scoreConf,REG.conf);}
+function renderScore(elId,kind,estratos,store,reg){const el=document.getElementById(elId);el.innerHTML="";
   for(const e of estratos){if(!(e in store))store[e]=(e in reg)?reg[e]:0;const conf=CONFIRMADO.has(e);
     const row=document.createElement("div");row.className="score-row";
-    row.innerHTML='<span class="estr">'+esc(e)+'</span><input type="number" step="0.001" min="0" data-kind="'+kind+'" data-estr="'+esc(e)+'" value="'+store[e]+'">'+(conf?'<span class="conf">regimento</span>':'<span class="flag">extensão — confira</span>');
+    row.innerHTML='<span class="estr">'+esc(e)+'</span><input type="number" step="0.001" min="0" data-kind="'+kind+'" data-estr="'+esc(e)+'" value="'+store[e]+'">'+(conf?'<span class="conf">regimento</span>':'<span class="flag">fora do regimento (0)</span>');
     el.appendChild(row);}
   el.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",()=>{const v=parseFloat(inp.value);(inp.dataset.kind==="per"?STATE.scorePer:STATE.scoreConf)[inp.dataset.estr]=isNaN(v)?0:v;recompute();}));
 }
 
 /* ===== janelas e cálculo ===== */
-function windows(Y){return [{key:"a",label:"Ano corrente",from:Y,to:Y},{key:"b",label:"Últimos 2 anos",from:Y-1,to:Y},{key:"c",label:"Últimos 3 anos",from:Y-2,to:Y},{key:"d",label:"Últimos 5 anos",from:Y-4,to:Y}];}
+function windows(Y){return [{key:"a",label:"Ano corrente",from:Y,to:Y},{key:"b",label:"Últimos 2 anos",from:Y-1,to:Y},{key:"c",label:"Últimos 3 anos",from:Y-2,to:Y,reg:true},{key:"d",label:"Últimos 5 anos",from:Y-4,to:Y}];}
+function ptsBase(it){return it.estrato?((it.tipo==="per"?STATE.scorePer:STATE.scoreConf)[it.estrato]||0):0;}
 function recompute(){
-  if(!STATE.loaded)return;
-  matchAll();
+  if(!STATE.loaded)return;matchAll();
   const Y=toInt(document.getElementById("anoCorrente").value)||new Date().getFullYear();
   const soC=document.getElementById("soCompletos").checked;const wins=windows(Y);
-  document.getElementById("windowsNote").textContent="Janelas móveis: ano corrente = "+Y+" · 2 anos = "+(Y-1)+"–"+Y+" · 3 anos = "+(Y-2)+"–"+Y+" · 5 anos = "+(Y-4)+"–"+Y;
+  document.getElementById("windowsNote").textContent="Janelas móveis: ano corrente = "+Y+" · 2 anos = "+(Y-1)+"–"+Y+" · 3 anos = "+(Y-2)+"–"+Y+" (janela do regimento, ~36 meses) · 5 anos = "+(Y-4)+"–"+Y;
   const confItems=STATE.confs.filter(c=>!soC||c.natureza==="COMPLETO");
-  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato}))];
+  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato,divisor:a.divisor||1})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato,divisor:c.divisor||1}))];
   const agg={};for(const w of wins)agg[w.key]={total:0,per:0,conf:0,nPer:0,nConf:0,byEstr:{per:{},conf:{}}};
-  for(const it of items){if(it.ano===null)continue;const pts=it.estrato?((it.tipo==="per"?STATE.scorePer:STATE.scoreConf)[it.estrato]||0):0;
-    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=pts;if(it.tipo==="per"){A.per+=pts;A.nPer++;}else{A.conf+=pts;A.nConf++;}
-      if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=pts;}}}
-  renderResults(wins,agg);
+  for(const it of items){if(it.ano===null)continue;const eff=ptsBase(it)/(it.divisor||1);
+    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=eff;if(it.tipo==="per"){A.per+=eff;A.nPer++;}else{A.conf+=eff;A.nConf++;}if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=eff;}}}
+  renderResults(wins,agg);renderCompliance(Y,soC);
 }
 
-/* ===== render ===== */
+/* ===== render ficha ===== */
 function renderFileList(){
   const rows=[
     {tag:"lattes",label:"Lattes",val:STATE.file||"—",detail:(STATE.articles.length+STATE.confs.length)?(STATE.articles.length+" artigos · "+STATE.confs.length+" trabalhos em eventos"):"nenhuma publicação lida"},
     {tag:"per",label:"Qualis periódicos",val:(STATE.perSources.map(s=>s.name).join(" + ")||"—"),detail:Object.keys(STATE.journalMap).length+" periódicos"+(STATE.perSources.length?(" ("+STATE.perSources.map(s=>s.area+" "+s.count).join(" + ")+")"):"")},
     {tag:"conf",label:"Qualis conferências",val:STATE.confName||"—",detail:STATE.confList.length+" eventos"}
   ];
-  document.getElementById("fileList").innerHTML=rows.map(r=>{const ok=r.tag!=="lattes"?( (r.tag==="per"?Object.keys(STATE.journalMap).length:STATE.confList.length)>0 ):((STATE.articles.length+STATE.confs.length)>0);return '<li><span class="tag '+r.tag+'">'+esc(r.label)+'</span><span class="name">'+esc(r.val)+'</span><span class="meta '+(ok?"state-ok":"state-no")+'">'+(ok?"✓ ":"✕ ")+esc(r.detail)+'</span></li>';}).join("");
+  document.getElementById("fileList").innerHTML=rows.map(r=>{const ok=r.tag==="lattes"?((STATE.articles.length+STATE.confs.length)>0):((r.tag==="per"?Object.keys(STATE.journalMap).length:STATE.confList.length)>0);return '<li><span class="tag '+r.tag+'">'+esc(r.label)+'</span><span class="name">'+esc(r.val)+'</span><span class="meta '+(ok?"state-ok":"state-no")+'">'+(ok?"✓ ":"✕ ")+esc(r.detail)+'</span></li>';}).join("");
 }
 function renderResults(wins,agg){
   const el=document.getElementById("results");
   if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<div class="banner err"><span class="ico">!</span><span>Nenhuma publicação lida do XML. Confirme que o arquivo é o currículo exportado do Lattes.</span></div>';return;}
   let h='<div class="ficha">';
   for(const w of wins){const A=agg[w.key];const yrs=w.from===w.to?String(w.to):w.from+"–"+w.to;
-    h+='<div class="card"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div></div></div>';}
+    h+='<div class="card'+(w.reg?" win3":"")+'"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+(w.reg?" · regimento":"")+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div></div></div>';}
   h+='</div>';
   h+=breakdown("Periódicos por estrato","per",wins,agg)+breakdown("Conferências por estrato","conf",wins,agg)+review();
-  el.innerHTML=h;wireOverrides();
+  el.innerHTML=h;wireInputs();
 }
 function breakdown(title,kind,wins,agg){
   const estratos=sortEstratos([].concat(...wins.map(w=>Object.keys(agg[w.key].byEstr[kind]))));if(!estratos.length)return "";
@@ -354,29 +337,58 @@ function review(){
   for(const a of STATE.articles)rows.push({tipo:"per",ano:a.ano,titulo:a.titulo,veiculo:a.periodico,idref:a.issn,estrato:a.estrato,matchType:a.matchType,ref:a,estratos:PER_ESTR});
   for(const c of STATE.confs){if(soC&&c.natureza!=="COMPLETO")continue;rows.push({tipo:"conf",ano:c.ano,titulo:c.titulo,veiculo:c.evento,idref:c.natureza,estrato:c.estrato,matchType:c.matchType,ref:c,estratos:CONF_ESTR});}
   rows.sort((a,b)=>(b.ano||0)-(a.ano||0));STATE._rows=rows;
-  const semN=rows.filter(r=>!r.estrato).length;const aprN=rows.filter(r=>r.matchType==="aprox"||r.matchType==="sigla").length;
+  const semN=rows.filter(r=>!r.estrato).length;const aprN=rows.filter(r=>r.matchType==="aprox"||r.matchType==="sigla").length;const divN=rows.filter(r=>(r.ref.divisor||1)>1).length;
   let h='<h3 class="subhead">Detalhamento e revisão <span class="count-chip">'+rows.length+' itens</span></h3>';
-  h+='<div class="muted-note">Ajuste o estrato de qualquer linha pelo seletor; a correção recalcula a pontuação. Sem estrato: '+semN+' · correspondência aproximada de conferência: '+aprN+'.</div>';
-  h+='<table class="grid"><thead><tr><th class="num">Ano</th><th>Tipo</th><th class="ttl">Título</th><th>Veículo</th><th>Estrato</th><th>Origem</th><th class="num">Pontos</th></tr></thead><tbody>';
+  h+='<div class="muted-note">Ajuste o estrato pelo seletor e o número de coautores docentes do PPGI na coluna "÷ PPGI"; a pontuação efetiva é a pontuação do estrato dividida por esse número. Sem estrato: '+semN+' · conferência aproximada: '+aprN+' · com divisão por coautoria PPGI: '+divN+'.</div>';
+  h+='<table class="grid"><thead><tr><th class="num">Ano</th><th>Tipo</th><th class="ttl">Título</th><th>Veículo</th><th>Estrato</th><th>Origem</th><th class="num">÷ PPGI</th><th class="num">Pontos</th></tr></thead><tbody>';
   rows.forEach((r,idx)=>{r._idx=idx;const rev=!r.estrato||r.matchType==="aprox"||r.matchType==="sigla";if(!incluirSem&&!r.estrato)return;
-    const pts=r.estrato?((r.tipo==="per"?STATE.scorePer:STATE.scoreConf)[r.estrato]||0):0;
+    const base=r.estrato?((r.tipo==="per"?STATE.scorePer:STATE.scoreConf)[r.estrato]||0):0;const div=r.ref.divisor||1;const eff=base/div;
     const opts=['<option value="">— sem —</option>'].concat(r.estratos.map(e=>'<option value="'+esc(e)+'"'+(e===r.estrato?" selected":"")+'>'+esc(e)+'</option>')).join("");
     const tag=r.tipo==="per"?'<span class="tag per" style="font-size:10px">Periódico</span>':'<span class="tag conf" style="font-size:10px">'+(r.idref==="COMPLETO"?"Conf. completo":"Conf. "+esc((r.idref||"").toLowerCase()))+'</span>';
-    let origem={issn:"ISSN",exato:"nome",sigla:"sigla",aprox:"aprox.",manual:"manual"}[r.matchType]||"—";
-    if(r.matchType==="issn"&&r.ref&&r.ref.area)origem+=" ("+r.ref.area+")";
+    let origem={issn:"ISSN",exato:"nome",sigla:"sigla",aprox:"aprox.",manual:"manual"}[r.matchType]||"—";if(r.matchType==="issn"&&r.ref.area)origem+=" ("+r.ref.area+")";
     const badge=rev?'<span class="badge-review">'+(r.matchType==="aprox"?"aprox.":r.matchType==="sigla"?"sigla":"revisar")+'</span>':'';
-    h+='<tr class="'+(rev?"row-review":"")+'"><td class="num">'+(r.ano??"—")+'</td><td>'+tag+'</td><td class="ttl">'+esc(r.titulo)+'</td><td class="ven">'+esc(r.veiculo||"—")+(r.tipo==="per"&&r.idref?' · '+esc(r.idref):'')+'</td><td><select class="estr-sel" data-idx="'+idx+'">'+opts+'</select>'+badge+'</td><td class="ven">'+origem+'</td><td class="num">'+fmt(pts)+'</td></tr>';
+    const cop=(r.ref.coautoresPpgi&&r.ref.coautoresPpgi.length)?' title="Coautores PPGI: '+esc(r.ref.coautoresPpgi.join(", "))+'"':'';
+    h+='<tr class="'+(rev?"row-review":"")+'"><td class="num">'+(r.ano??"—")+'</td><td>'+tag+'</td><td class="ttl">'+esc(r.titulo)+'</td><td class="ven">'+esc(r.veiculo||"—")+(r.tipo==="per"&&r.idref?' · '+esc(r.idref):'')+'</td><td><select class="estr-sel" data-idx="'+idx+'">'+opts+'</select>'+badge+'</td><td class="ven">'+origem+'</td><td class="num"><input class="div-inp" type="number" min="1" step="1" data-idx="'+idx+'" value="'+div+'"'+cop+'></td><td class="num">'+fmt(eff)+(div>1?'<br><small style="color:var(--faint)">('+fmt(base)+'÷'+div+')</small>':'')+'</td></tr>';
   });
   return h+'</tbody></table>';
 }
-function wireOverrides(){document.querySelectorAll("select.estr-sel").forEach(sel=>sel.addEventListener("change",()=>{const r=STATE._rows[+sel.dataset.idx];if(r){r.ref.override=sel.value||null;recompute();}}));}
+function wireInputs(){
+  document.querySelectorAll("select.estr-sel").forEach(sel=>sel.addEventListener("change",()=>{const r=STATE._rows[+sel.dataset.idx];if(r){r.ref.override=sel.value||null;recompute();}}));
+  document.querySelectorAll("input.div-inp").forEach(inp=>inp.addEventListener("input",()=>{const r=STATE._rows[+inp.dataset.idx];if(r){const v=parseInt(inp.value,10);r.ref.divisor=(isNaN(v)||v<1)?1:v;recompute();}}));
+}
+
+/* ===== verificação do regimento (Art. 3º e 4º) ===== */
+function renderCompliance(Y,soC){
+  const el=document.getElementById("compliance");
+  if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<p class="score-empty">Envie o XML do Lattes para verificar.</p>';return;}
+  const from=Y-2,to=Y; // últimos 36 meses (aproximado por ano-calendário)
+  let pts=0,nA3=0,nA4=0;
+  for(const a of STATE.articles){if(a.ano===null||a.ano<from||a.ano>to)continue;
+    if(a.estrato&&ESTR_VALIDOS.has(a.estrato))pts+=(STATE.scorePer[a.estrato]||0)/(a.divisor||1);
+    if(a.estrato&&A3_MAIS.has(a.estrato))nA3++;if(a.estrato&&A4_MAIS.has(a.estrato))nA4++;}
+  for(const c of STATE.confs){if(soC&&c.natureza!=="COMPLETO")continue;if(c.ano===null||c.ano<from||c.ano>to)continue;if(c.estrato&&ESTR_VALIDOS.has(c.estrato))pts+=(STATE.scoreConf[c.estrato]||0)/(c.divisor||1);}
+  pts=Math.round(pts*1000)/1000;
+  const bloco=(titulo,art,lim,nMin)=>{
+    const okP=pts>=lim.pontos, okJ=nMin>=lim.minPeriodicos, all=okP&&okJ;
+    const ic=b=>b?'<span class="ic ok">✓</span>':'<span class="ic no">✗</span>';
+    return '<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+' · janela '+from+'–'+to+' (últimos 36 meses)</p>'+
+      '<div class="verdict '+(all?"ok":"no")+'">'+(all?"✓ Atende ao critério Pesquisa":"✗ Não atende ao critério Pesquisa")+'</div>'+
+      '<div class="req">'+ic(okP)+'<span class="desc">Produção em conferências ou periódicos com estrato ≥ B1 (pontos efetivos)</span><span class="val">'+fmt(pts)+' <small>/ ≥ '+lim.pontos+'</small></span></div>'+
+      '<div class="req">'+ic(okJ)+'<span class="desc">Periódicos '+lim.minLabel+' (efetivamente publicados)</span><span class="val">'+nMin+' <small>/ ≥ '+lim.minPeriodicos+'</small></span></div>'+
+      '</div>';
+  };
+  let h=bloco("Credenciamento","Art. 3º",LIM.cred,nA3);
+  h+=bloco("Recredenciamento","Art. 4º",LIM.recred,nA4);
+  h+='<div class="crit"><h3>Observações</h3><p class="art">itens não verificáveis automaticamente pelo Lattes</p>'+
+     '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">A verificação acima cobre o critério <b>Pesquisa</b>. O regimento exige ainda, para recredenciamento (Art. 4º), os critérios <b>Orientação</b> (ao menos duas orientações em andamento ou concluídas nos últimos 24 meses) e <b>Docência</b> (ao menos uma disciplina nos últimos 24 meses), além de pelo menos uma produção em coautoria com discente do PPGI. Esses pontos e o requisito de a produção ser majoritariamente da área de Computação e afins dependem de avaliação qualitativa. A janela de 36 meses é aproximada por ano-calendário ('+from+' a '+to+'), pois o Lattes informa apenas o ano da publicação. A divisão por coautores docentes do PPGI foi detectada automaticamente pelos nomes dos autores; confira a coluna "÷ PPGI" na tabela de revisão.</div></div>';
+  el.innerHTML=h;
+}
 
 /* ===== init ===== */
 document.getElementById("anoCorrente").value=new Date().getFullYear();
 ["anoCorrente","soCompletos","incluirSem"].forEach(id=>{document.getElementById(id).addEventListener("input",recompute);document.getElementById(id).addEventListener("change",recompute);});
 document.getElementById("windowsNote").textContent="Janelas móveis a partir do ano corrente. Envie o XML do Lattes para iniciar.";
-buildScoreTables();
-loadBases();
+buildScoreTables();loadBases();
 </script>
 </body>
 </html>
