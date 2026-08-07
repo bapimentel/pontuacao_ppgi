@@ -246,6 +246,7 @@ document.getElementById("file").addEventListener("change",async ev=>{
 function decodeXml(buffer){const b=new Uint8Array(buffer);let head="";for(let i=0;i<Math.min(b.length,300);i++)head+=String.fromCharCode(b[i]);let enc="utf-8";const m=head.match(/encoding\s*=\s*["']([^"']+)["']/i);if(m)enc=m[1].toLowerCase();if(enc.includes("8859")||enc.includes("latin")||enc.includes("1252"))enc="iso-8859-1";try{return new TextDecoder(enc).decode(buffer);}catch(e){try{return new TextDecoder("iso-8859-1").decode(buffer);}catch(_){return new TextDecoder("utf-8").decode(buffer);}}}
 function looksLattes(t){return /CURRICULO-VITAE|DADOS-GERAIS|ARTIGOS-PUBLICADOS|PRODUCAO-BIBLIOGRAFICA/i.test(t.slice(0,20000));}
 function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
+function anoOrientacao(el){const ks=el.getElementsByTagName("*");for(const k of ks){const y=k.getAttribute("ANO")||k.getAttribute("ANO-DE-CONCLUSAO")||k.getAttribute("ANO-DE-INICIO");if(y&&/^\d{4}$/.test(y))return +y;}const y=el.getAttribute("ANO");return (y&&/^\d{4}$/.test(y))?+y:null;}
 function parseLattesXml(xml){
   STATE.articles=[];STATE.confs=[];
   const doc=new DOMParser().parseFromString(xml,"application/xml");
@@ -262,6 +263,10 @@ function parseLattesXml(xml){
     const evento=d?(d.getAttribute("NOME-DO-EVENTO")||d.getAttribute("TITULO-DOS-ANAIS-OU-PROCEEDINGS")||""):"";const aut=autoresDe(t);const cp=coautoresPpgi(aut);const div=Math.max(1,cp.length);
     STATE.confs.push({ano,titulo:b.getAttribute("TITULO-DO-TRABALHO")||"",evento,natureza:(b.getAttribute("NATUREZA")||"").toUpperCase(),autores:aut,coautoresPpgi:cp,divisorAuto:div,divisor:div,estrato:null,matched:false,matchType:null,override:null});
   }
+  STATE.orientOngoing=0;STATE.orientConcluidas=[];
+  for(const el of doc.getElementsByTagName("*")){const tn=el.tagName||"";
+    if(tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE")===0)STATE.orientOngoing++;
+    else if(tn.indexOf("ORIENTACOES-CONCLUIDAS-DE")===0||tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA")===0)STATE.orientConcluidas.push(anoOrientacao(el));}
 }
 
 /* ===== correspondência ===== */
@@ -360,26 +365,32 @@ function wireInputs(){
 function renderCompliance(Y,soC){
   const el=document.getElementById("compliance");
   if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<p class="score-empty">Envie o XML do Lattes para verificar.</p>';return;}
-  const from=Y-2,to=Y; // últimos 36 meses (aproximado por ano-calendário)
+  const from=Y-2,to=Y;
   let pts=0,nA3=0,nA4=0;
   for(const a of STATE.articles){if(a.ano===null||a.ano<from||a.ano>to)continue;
     if(a.estrato&&ESTR_VALIDOS.has(a.estrato))pts+=(STATE.scorePer[a.estrato]||0)/(a.divisor||1);
     if(a.estrato&&A3_MAIS.has(a.estrato))nA3++;if(a.estrato&&A4_MAIS.has(a.estrato))nA4++;}
   for(const c of STATE.confs){if(soC&&c.natureza!=="COMPLETO")continue;if(c.ano===null||c.ano<from||c.ano>to)continue;if(c.estrato&&ESTR_VALIDOS.has(c.estrato))pts+=(STATE.scoreConf[c.estrato]||0)/(c.divisor||1);}
   pts=Math.round(pts*1000)/1000;
-  const bloco=(titulo,art,lim,nMin)=>{
-    const okP=pts>=lim.pontos, okJ=nMin>=lim.minPeriodicos, all=okP&&okJ;
-    const ic=b=>b?'<span class="ic ok">✓</span>':'<span class="ic no">✗</span>';
-    return '<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+' · janela '+from+'–'+to+' (últimos 36 meses)</p>'+
-      '<div class="verdict '+(all?"ok":"no")+'">'+(all?"✓ Atende ao critério Pesquisa":"✗ Não atende ao critério Pesquisa")+'</div>'+
-      '<div class="req">'+ic(okP)+'<span class="desc">Produção em conferências ou periódicos com estrato ≥ B1 (pontos efetivos)</span><span class="val">'+fmt(pts)+' <small>/ ≥ '+lim.pontos+'</small></span></div>'+
-      '<div class="req">'+ic(okJ)+'<span class="desc">Periódicos '+lim.minLabel+' (efetivamente publicados)</span><span class="val">'+nMin+' <small>/ ≥ '+lim.minPeriodicos+'</small></span></div>'+
-      '</div>';
-  };
-  let h=bloco("Credenciamento","Art. 3º",LIM.cred,nA3);
-  h+=bloco("Recredenciamento","Art. 4º",LIM.recred,nA4);
-  h+='<div class="crit"><h3>Observações</h3><p class="art">itens não verificáveis automaticamente pelo Lattes</p>'+
-     '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">A verificação acima cobre o critério <b>Pesquisa</b>. O regimento exige ainda, para recredenciamento (Art. 4º), os critérios <b>Orientação</b> (ao menos duas orientações em andamento ou concluídas nos últimos 24 meses) e <b>Docência</b> (ao menos uma disciplina nos últimos 24 meses), além de pelo menos uma produção em coautoria com discente do PPGI. Esses pontos e o requisito de a produção ser majoritariamente da área de Computação e afins dependem de avaliação qualitativa. A janela de 36 meses é aproximada por ano-calendário ('+from+' a '+to+'), pois o Lattes informa apenas o ano da publicação. A divisão por coautores docentes do PPGI foi detectada automaticamente pelos nomes dos autores; confira a coluna "÷ PPGI" na tabela de revisão.</div></div>';
+  const oFrom=Y-1;
+  const oConcl=(STATE.orientConcluidas||[]).filter(y=>y!==null&&y>=oFrom&&y<=Y).length;
+  const oAnd=STATE.orientOngoing||0;const orient=oAnd+oConcl;
+  const ic=b=>b?'<span class="ic ok">\u2713</span>':'<span class="ic no">\u2717</span>';
+  const bloco=(titulo,art,verd,reqs)=>{const all=reqs.every(r=>r.ok);
+    let s='<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+'</p><div class="verdict '+(all?"ok":"no")+'">'+(all?"\u2713 "+verd.ok:"\u2717 "+verd.no)+'</div>';
+    for(const r of reqs)s+='<div class="req">'+ic(r.ok)+'<span class="desc">'+r.desc+'</span><span class="val">'+r.val+' <small>/ '+r.lim+'</small></span></div>';
+    return s+'</div>';};
+  let h=bloco("Credenciamento","Art. 3\u00ba \u00b7 janela "+from+"\u2013"+to+" (\u00faltimos 36 meses)",
+    {ok:"Atende ao crit\u00e9rio Pesquisa",no:"N\u00e3o atende ao crit\u00e9rio Pesquisa"},
+    [{ok:pts>=3.5,desc:"Produ\u00e7\u00e3o em confer\u00eancias ou peri\u00f3dicos com estrato \u2265 B1 (pontos efetivos)",val:fmt(pts),lim:"\u2265 3.5"},
+     {ok:nA3>=2,desc:"Peri\u00f3dicos A3 ou superior (efetivamente publicados)",val:nA3,lim:"\u2265 2"}]);
+  h+=bloco("Recredenciamento","Art. 4\u00ba \u00b7 pesquisa "+from+"\u2013"+to+" \u00b7 orienta\u00e7\u00e3o "+oFrom+"\u2013"+Y,
+    {ok:"Atende aos crit\u00e9rios verific\u00e1veis",no:"N\u00e3o atende aos crit\u00e9rios verific\u00e1veis"},
+    [{ok:pts>=2.5,desc:"Produ\u00e7\u00e3o em confer\u00eancias ou peri\u00f3dicos com estrato \u2265 B1 (pontos efetivos)",val:fmt(pts),lim:"\u2265 2.5"},
+     {ok:nA4>=1,desc:"Peri\u00f3dicos A4 ou superior (efetivamente publicados)",val:nA4,lim:"\u2265 1"},
+     {ok:orient>=2,desc:"Orienta\u00e7\u00f5es em andamento ou conclu\u00eddas nos \u00faltimos 24 meses ("+oAnd+" em andamento \u00b7 "+oConcl+" conclu\u00eddas)",val:orient,lim:"\u2265 2"}]);
+  h+='<div class="crit"><h3>Observa\u00e7\u00f5es</h3><p class="art">itens n\u00e3o verific\u00e1veis automaticamente pelo Lattes</p>'+
+     '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">Para recredenciamento (Art. 4\u00ba) resta o crit\u00e9rio <b>Doc\u00eancia</b> (ao menos uma disciplina nos \u00faltimos 24 meses) e a exig\u00eancia de pelo menos uma produ\u00e7\u00e3o em coautoria com discente do PPGI, n\u00e3o extra\u00edveis de forma confi\u00e1vel do Lattes, assim como o requisito de a produ\u00e7\u00e3o ser majoritariamente da \u00e1rea de Computa\u00e7\u00e3o e afins, que \u00e9 qualitativo. As orienta\u00e7\u00f5es s\u00e3o contadas a partir das se\u00e7\u00f5es de orienta\u00e7\u00f5es em andamento e conclu\u00eddas do Lattes (conclu\u00eddas dentro da janela de 24 meses, '+oFrom+'\u2013'+Y+'). A janela de 36 meses da pesquisa \u00e9 aproximada por ano-calend\u00e1rio ('+from+'\u2013'+to+'), pois o Lattes informa apenas o ano.</div></div>';
   el.innerHTML=h;
 }
 
