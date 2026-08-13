@@ -25,19 +25,17 @@
   .step{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent);flex:0 0 auto}
   .panel-head h2{font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin:0}
   .panel-head .hint{font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:auto}
-  .drop{border:1.5px dashed var(--line2);border-radius:8px;padding:24px 20px;text-align:center;background:#fafbfa}
+  .drop{border-radius:12px;padding:48px 24px;text-align:center;background:#fff;outline:2px dashed transparent;outline-offset:-8px;transition:background .12s ease,outline-color .12s ease}
   .btn{font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff;padding:10px 18px;border-radius:6px}
   .btn:hover{filter:brightness(1.07)}
-  .drop p{color:var(--muted);font-size:13px;margin:12px 0 0}
   .drop input{display:none}
-  .drop{transition:border-color .12s ease,background .12s ease}
-  .drop.drag{border-color:var(--accent);background:#eef5f2}
-  .drop-ic{width:34px;height:34px;margin:0 auto 12px;border:2px solid var(--line2);border-radius:8px;position:relative}
-  .drop-ic::before{content:"";position:absolute;left:50%;top:8px;width:2px;height:13px;background:var(--muted);transform:translateX(-50%)}
-  .drop-ic::after{content:"";position:absolute;left:50%;top:9px;width:8px;height:8px;border-left:2px solid var(--muted);border-top:2px solid var(--muted);transform:translate(-50%,0) rotate(45deg)}
-  .drop-title{font-size:15px;color:var(--ink);margin:0}
-  .drop-sub{color:var(--muted);font-size:12.5px;margin:12px auto 0;max-width:62ch}
-  .prog{display:none;margin:16px auto 0;max-width:440px;font-family:var(--mono);font-size:12px;color:var(--accent)}
+  .drop.drag{background:#f2f8f6;outline-color:var(--accent)}
+  .uploadbtn{display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:16px;font-weight:600;color:var(--accent);background:#fff;border:1.5px solid var(--line2);border-radius:999px;padding:12px 28px;cursor:pointer;box-shadow:0 1px 2px rgba(22,32,44,.06);transition:border-color .12s ease,background .12s ease}
+  .uploadbtn:hover{border-color:var(--accent);background:#f4faf8}
+  .drop-or{color:var(--faint);font-size:13px;margin:18px 0 0}
+  .drop-title{font-size:16px;color:var(--ink);margin:8px 0 0}
+  .drop-sub{color:var(--muted);font-size:12.5px;margin:16px auto 0;max-width:60ch}
+  .prog{display:none;margin:18px auto 0;max-width:440px;font-family:var(--mono);font-size:12px;color:var(--accent)}
   .prog.show{display:block}
   .bar{height:6px;background:#e6edeb;border-radius:4px;overflow:hidden;margin:8px 0 0}
   .bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s ease}
@@ -138,12 +136,16 @@
   </header>
 
   <section class="panel">
-    <div class="panel-head"><span class="step">1</span><h2>Enviar o Lattes</h2><span class="hint">PDF do currículo ou XML exportado</span></div>
+    <div class="panel-head"><span class="step">1</span><h2>Enviar o Lattes (XML)</h2><span class="hint">Plataforma Lattes › Exportar › XML</span></div>
     <div class="drop" id="drop">
-      <div class="drop-ic" aria-hidden="true"></div>
-      <p class="drop-title">Arraste o arquivo do Lattes aqui, ou <label class="btn" for="file">selecione um arquivo</label></p>
-      <input type="file" id="file" accept=".pdf,.xml,.zip">
-      <p class="drop-sub">Aceita o <b>PDF</b> do currículo (lido no navegador, sem precisar de login) ou o <b>.xml</b>/<b>.zip</b> exportado do Lattes (leitura exata e mais rápida). Nada sai do seu computador.</p>
+      <label class="uploadbtn" for="file">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 16.5V8"></path><path d="M8.5 11.5 12 8l3.5 3.5"></path></svg>
+        Selecionar um arquivo
+      </label>
+      <input type="file" id="file" accept=".xml,.zip">
+      <p class="drop-or">ou</p>
+      <p class="drop-title">Arraste e solte o arquivo aqui</p>
+      <p class="drop-sub">Envie o <b>.xml</b> (ou o <b>.zip</b> que o contém) exportado do Lattes. Leitura local e exata; nada sai do seu computador.</p>
       <div class="prog" id="prog"><span id="progText"></span><div class="bar"><i id="progBar"></i></div></div>
     </div>
     <details class="howto">
@@ -273,11 +275,11 @@ async function loadBases(){
 /* ===== upload (apenas XML/ZIP) ===== */
 async function handleFile(f){
   if(!f)return;const ext=(f.name.split(".").pop()||"").toLowerCase();const msg=document.getElementById("uploadMsg");
-  if(!["pdf","xml","zip"].includes(ext)){msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Formato não suportado. Envie o <b>.pdf</b> do currículo ou o <b>.xml</b>/<b>.zip</b> exportado do Lattes.</span></div>';return;}
-  msg.innerHTML="";STATE.articles=[];STATE.confs=[];STATE.loaded=false;STATE.file=f.name;STATE.mode=(ext==="pdf")?"PDF":"XML";
+  if(ext==="pdf"){msg.innerHTML='<div class="banner"><span class="ico">i</span><span>Este arquivo é um PDF. Exporte o currículo em <b>XML</b> na Plataforma Lattes (menu <b>Exportar</b>) e envie o <b>.xml</b> ou o <b>.zip</b>. Veja o passo a passo abaixo.</span></div>';return;}
+  if(!["xml","zip"].includes(ext)){msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Formato não suportado. Envie o <b>.xml</b> (ou <b>.zip</b>) exportado do Lattes.</span></div>';return;}
+  msg.innerHTML="";STATE.articles=[];STATE.confs=[];STATE.loaded=false;STATE.file=f.name;STATE.mode="XML";
   try{
-    if(ext==="pdf"){const txt=await readPdf(f);parseLattesText(txt);}
-    else if(ext==="zip"){const zip=await JSZip.loadAsync(await f.arrayBuffer());let ok=false;for(const zn of Object.keys(zip.files)){if(zn.toLowerCase().endsWith(".xml")){const t=decodeXml(await zip.files[zn].async("arraybuffer"));if(looksLattes(t)){parseLattesXml(t);ok=true;break;}}}if(!ok)throw new Error("nenhum XML de Lattes dentro do .zip");}
+    if(ext==="zip"){const zip=await JSZip.loadAsync(await f.arrayBuffer());let ok=false;for(const zn of Object.keys(zip.files)){if(zn.toLowerCase().endsWith(".xml")){const t=decodeXml(await zip.files[zn].async("arraybuffer"));if(looksLattes(t)){parseLattesXml(t);ok=true;break;}}}if(!ok)throw new Error("nenhum XML de Lattes dentro do .zip");}
     else{const t=decodeXml(await f.arrayBuffer());if(!looksLattes(t))throw new Error("o XML não parece um currículo Lattes");parseLattesXml(t);}
   }catch(e){hideProg();msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Falha ao ler: '+esc(e.message)+'</span></div>';return;}
   hideProg();STATE.loaded=true;renderFileList();recompute();
