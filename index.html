@@ -240,7 +240,7 @@ const LIM={cred:{pontos:3.5,minPeriodicos:2,minEstr:A3_MAIS,minLabel:"A3 ou supe
 const DOCENTES_PPGI=["Alan Pedro da Silva","Álvaro Alvares de Carvalho César Sobrinho","André Luiz Lins de Aquino","André Magno Costa de Araújo","Aydano Pamponet Machado","Baldoino Fonseca dos Santos Neto","Bruno Almeida Pimentel","Bruno Costa e Silva Nogueira","Diego Dermeval Medeiros da Cunha Matos","Erick de Andrade Barboza","Evandro de Barros Costa","Fabiane da Silva Queiroz","Glauber Rodrigues Leite","Ig Ibert Bittencourt Santana Pinto","Ícaro Bezerra Queiroz de Araújo","Leandro Dias da Silva","Lucas Benevides Viana de Amorim","Marcelo Costa Oliveira","Márcio de Medeiros Ribeiro","Maurício Beltrão de Rossiter Corrêa","Ranilson Oscar Araújo Paiva","Rian Gabriel Santos Pinheiro","Rodrigo Gusmão de Carvalho Rocha","Thales Miranda de Almeida Vieira","Thiago Damasceno Cordeiro","Tiago Figueiredo Vieira","Fábio José Coutinho da Silva","Gustavo Henrique Ferreira de Miranda Oliveira","Rafael de Amorim Silva","Xu Yang"];
 const STOP=new Set(["de","da","do","dos","das","e"]);
 function nameTokens(s){return norm(s).split(" ").filter(w=>w.length>1&&!STOP.has(w));}
-const DOC_TOK=DOCENTES_PPGI.map(n=>{const t=nameTokens(n);return {nome:n,first:t[0],last:t[t.length-1]};});
+const DOC_TOK=DOCENTES_PPGI.map(n=>{const t=nameTokens(n);return {nome:n,first:t[0],last:t[t.length-1],sec:t.length>=3?t[1]:null};});
 function docenteDe(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size)return null;for(const d of DOC_TOK){if(d.first&&d.last&&t.has(d.first)&&t.has(d.last))return d.nome;}return null;}
 function coautoresPpgi(autores){const s=new Set();for(const a of (autores||[])){const d=docenteDe(a);if(d)s.add(d);}return [...s];}
 
@@ -307,17 +307,28 @@ async function readPdf(f){
   await worker.terminate();showProg("OCR concluído.",1,1);return ot;
 }
 function normEst(x){if(!x)return null;x=x.toString().toUpperCase().replace(/[LI!|]/g,"1");return /^([AB][1-5]|C)$/.test(x)?x:null;}
+function coautoresPpgiTexto(bloco){
+  const B=(bloco||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+  const esc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const found=[];
+  for(const d of DOC_TOK){if(!d.first||!d.last)continue;const last=esc(d.last),fi=d.first[0];
+    if(new RegExp("\\b"+last+"\\s*,\\s*"+esc(d.first)+"\\b").test(B)){found.push(d.nome);continue;}
+    const re=d.sec?new RegExp("\\b"+last+"\\s*,\\s*"+fi+"[a-z]*\\.?\\s*"+d.sec[0]):new RegExp("\\b"+last+"\\s*,\\s*"+fi+"\\.?\\s");
+    if(re.test(B))found.push(d.nome);}
+  return found;
+}
 function parseLattesText(text){
   STATE.articles=[];STATE.confs=[];STATE.orientOngoing=0;STATE.orientConcluidas=[];STATE.discenteTok=[];
   const reJ=/ISSN[:\s]*([0-9]{4}-?[0-9]{3}[0-9Xx])[^\n]{0,50}?Qualis\/CAPES/g;let m;
+  let prevEnd=text.search(/Artigos completos publicados em peri/i);if(prevEnd<0)prevEnd=0;
   while((m=reJ.exec(text))){const issnRaw=m[1];const win=text.slice(Math.max(0,m.index-14),m.index);const tm=win.match(/[ABC][0-9LI!|]/g);const estL=tm?normEst(tm[tm.length-1]):null;const pre=text.slice(0,m.index);const ym=pre.match(/,\s*((?:19|20)\d\d)\./g);let ano=null;if(ym){const l=ym[ym.length-1].match(/((?:19|20)\d\d)/);ano=l?+l[1]:null;}
-    STATE.articles.push({ano,titulo:"",periodico:"ISSN "+issnRaw,issn:issnRaw,issnNorm:normIssn(issnRaw),estratoLattes:estL,autores:[],coautoresPpgi:[],divisorAuto:1,divisor:1,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
+    const cp=coautoresPpgiTexto(text.slice(prevEnd,m.index));const div=Math.max(1,cp.length);prevEnd=reJ.lastIndex;
+    STATE.articles.push({ano,titulo:"",periodico:"ISSN "+issnRaw,issn:issnRaw,issnNorm:normIssn(issnRaw),estratoLattes:estL,autores:[],coautoresPpgi:cp,divisorAuto:div,divisor:div,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
   const si=text.search(/Trabalhos completos publicados em anais/i);let seg=si>=0?text.slice(si):"";
   const em=seg.slice(50).search(/Resumos expandidos publicados|Resumos publicados em anais|Apresenta[cç][oõ]es de Trabalho|Outras produ[cç][oõ]es|Produ[cç][aã]o t[eé]cnica|Demais tipos de produ/i);if(em>0)seg=seg.slice(0,em+50);
-  const reC=/In:\s*([\s\S]{3,160}?)\s*,\s*((?:19|20)\d\d)/g;
-  while((m=reC.exec(seg))){const ev=m[1].replace(/[\s_]+/g," ").trim();if(ev.length<4)continue;STATE.confs.push({ano:+m[2],titulo:"",evento:ev,natureza:"COMPLETO",autores:[],coautoresPpgi:[],divisorAuto:1,divisor:1,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
+  const reC=/In:\s*([\s\S]{3,160}?)\s*,\s*((?:19|20)\d\d)/g;let prevC=0;
+  while((m=reC.exec(seg))){const ev=m[1].replace(/[\s_]+/g," ").trim();const cp=coautoresPpgiTexto(seg.slice(prevC,m.index));const div=Math.max(1,cp.length);prevC=reC.lastIndex;if(ev.length<4)continue;STATE.confs.push({ano:+m[2],titulo:"",evento:ev,natureza:"COMPLETO",autores:[],coautoresPpgi:cp,divisorAuto:div,divisor:div,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
 }
-function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
 function orientandoDe(el){const ks=el.getElementsByTagName("*");for(const k of ks){const n=k.getAttribute("NOME-DO-ORIENTANDO")||k.getAttribute("NOME-DO-ORIENTADO");if(n)return n;}return el.getAttribute("NOME-DO-ORIENTANDO")||el.getAttribute("NOME-DO-ORIENTADO")||"";}
 function isDiscente(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size||!STATE.discenteTok)return false;for(const d of STATE.discenteTok){if(t.has(d.first)&&t.has(d.last))return true;}return false;}
 function temDiscente(autores){for(const a of (autores||[]))if(isDiscente(a))return true;return false;}
@@ -423,7 +434,7 @@ function review(){
   rows.sort((a,b)=>(b.ano||0)-(a.ano||0));STATE._rows=rows;
   const semN=rows.filter(r=>!r.estrato).length;const aprN=rows.filter(r=>r.matchType==="aprox"||r.matchType==="sigla").length;const divN=rows.filter(r=>(r.ref.divisor||1)>1).length;
   let h='<h3 class="subhead">Detalhamento e revisão <span class="count-chip">'+rows.length+' itens</span></h3>';
-  h+='<div class="muted-note">Ajuste o estrato pelo seletor e o número de coautores docentes do PPGI na coluna "÷ PPGI"; a pontuação efetiva é a pontuação do estrato dividida por esse número. Sem estrato: '+semN+' · conferência aproximada: '+aprN+' · com divisão por coautoria PPGI: '+divN+'.'+(STATE.mode==="PDF"?' No modo PDF, os coautores docentes não são detectados automaticamente; informe o divisor manualmente quando aplicável.':'')+'</div>';
+  h+='<div class="muted-note">Ajuste o estrato pelo seletor e o número de coautores docentes do PPGI na coluna "÷ PPGI"; a pontuação efetiva é a pontuação do estrato dividida por esse número. Sem estrato: '+semN+' · conferência aproximada: '+aprN+' · com divisão por coautoria PPGI: '+divN+'.'+(STATE.mode==="PDF"?' No modo PDF, os coautores docentes são detectados pelos nomes nas citações; ajuste o divisor se necessário.':'')+'</div>';
   h+='<table class="grid"><thead><tr><th class="num">Ano</th><th>Tipo</th><th class="ttl">Título</th><th>Veículo</th><th>Estrato</th><th>Origem</th><th class="num">÷ PPGI</th><th class="num">Pontos</th></tr></thead><tbody>';
   rows.forEach((r,idx)=>{r._idx=idx;const rev=!r.estrato||r.matchType==="aprox"||r.matchType==="sigla";if(!incluirSem&&!r.estrato)return;
     const base=r.estrato?((r.tipo==="per"?STATE.scorePer:STATE.scoreConf)[r.estrato]||0):0;const div=r.ref.divisor||1;const eff=base/div;
@@ -464,7 +475,7 @@ function renderCompliance(Y,soC){
     let x='<div class="crit"><h3>'+titulo+'</h3><p class="art">'+art+'</p><div class="verdict '+(all?"ok":"no")+'">'+(all?"✓ "+verd.ok:"✗ "+verd.no)+'</div>';
     for(const r of reqs){const icon=r.info?'<span class="ic" style="color:var(--faint)">–</span>':ic(r.ok);const val=r.info?'<span style="color:var(--faint)">'+r.val+'</span>':(r.val+' <small>/ '+r.lim+'</small>');x+='<div class="req">'+icon+'<span class="desc">'+r.desc+'</span><span class="val">'+val+'</span></div>';}
     return x+'</div>';};
-  const ptsDesc="Produção em conferências ou periódicos com estrato ≥ B1"+(pdf?" (sem divisão por coautoria)":" (pontos efetivos)");
+  const ptsDesc="Produção em conferências ou periódicos com estrato ≥ B1 (pontos efetivos)";
   let h=bloco("Credenciamento","Art. 3º · janela "+from+"–"+to+" (últimos 36 meses)",
     {ok:"Atende ao critério Pesquisa",no:"Não atende ao critério Pesquisa"},
     [{ok:pts>=3.5,desc:ptsDesc,val:fmt(pts),lim:"≥ 3.5"},
@@ -475,7 +486,7 @@ function renderCompliance(Y,soC){
   else{rr.push({ok:orient>=2,desc:"Orientações em andamento ou concluídas nos últimos 24 meses ("+oAnd+" em andamento · "+oConcl+" concluídas)",val:orient,lim:"≥ 2"});rr.push({ok:discW>=1,desc:"Ao menos uma produção em coautoria com discente do PPGI (últimos 36 meses)",val:discW,lim:"≥ 1"});}
   h+=bloco("Recredenciamento","Art. 4º · pesquisa "+from+"–"+to+(pdf?"":" · orientação "+oFrom+"–"+Y),
     {ok:"Atende aos critérios verificáveis",no:"Não atende aos critérios verificáveis"},rr);
-  const obsPdf=pdf?"No modo PDF, a divisão de pontos por coautores docentes do PPGI e as verificações de orientação e de coautoria com discente não são feitas automaticamente (dependem dos dados estruturados do XML); ajuste o divisor por linha quando necessário e use o XML para a verificação completa. ":"";
+  const obsPdf=pdf?"No modo PDF, os coautores docentes do PPGI são detectados pelos nomes nas citações (ajuste o divisor por linha se necessário); as verificações de orientação e de coautoria com discente dependem dos dados estruturados do XML. ":"";
   h+='<div class="crit"><h3>Observações</h3><p class="art">critérios não verificáveis e notas de método</p>'+
      '<div class="obs" style="border-top:none;margin-top:0;padding-top:0">'+obsPdf+'Para recredenciamento (Art. 4º) resta o critério <b>Docência</b> (ao menos uma disciplina nos últimos 24 meses), não extraível do Lattes, e o requisito de a produção ser majoritariamente da área de Computação e afins, que é qualitativo. As janelas são aproximadas por ano-calendário (pesquisa em 36 meses: '+from+'–'+to+'), pois o Lattes informa apenas o ano.</div></div>';
   el.innerHTML=h;
