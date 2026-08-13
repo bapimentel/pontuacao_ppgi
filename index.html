@@ -331,6 +331,7 @@ function parseLattesText(text){
   const reC=/In:\s*([\s\S]{3,160}?)\s*,\s*((?:19|20)\d\d)/g;let prevC=0;
   while((m=reC.exec(seg))){const ev=m[1].replace(/[\s_]+/g," ").trim();const cp=coautoresPpgiTexto(seg.slice(prevC,m.index));const div=Math.max(1,cp.length);prevC=reC.lastIndex;if(ev.length<4)continue;STATE.confs.push({ano:+m[2],titulo:"",evento:ev,natureza:"COMPLETO",autores:[],coautoresPpgi:cp,divisorAuto:div,divisor:div,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
 }
+function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
 function orientandoDe(el){const ks=el.getElementsByTagName("*");for(const k of ks){const n=k.getAttribute("NOME-DO-ORIENTANDO")||k.getAttribute("NOME-DO-ORIENTADO");if(n)return n;}return el.getAttribute("NOME-DO-ORIENTANDO")||el.getAttribute("NOME-DO-ORIENTADO")||"";}
 function isDiscente(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size||!STATE.discenteTok)return false;for(const d of STATE.discenteTok){if(t.has(d.first)&&t.has(d.last))return true;}return false;}
 function temDiscente(autores){for(const a of (autores||[]))if(isDiscente(a))return true;return false;}
