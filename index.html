@@ -332,6 +332,7 @@ function parseLattesText(text){
   while((m=reC.exec(seg))){const ev=m[1].replace(/[\s_]+/g," ").trim();const cp=coautoresPpgiTexto(seg.slice(prevC,m.index));const div=Math.max(1,cp.length);prevC=reC.lastIndex;if(ev.length<4)continue;STATE.confs.push({ano:+m[2],titulo:"",evento:ev,natureza:"COMPLETO",autores:[],coautoresPpgi:cp,divisorAuto:div,divisor:div,hasDiscente:false,estrato:null,matched:false,matchType:null,override:null});}
 }
 function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=>x.getAttribute("NOME-COMPLETO-DO-AUTOR")||x.getAttribute("NOME-PARA-CITACAO")||"").filter(Boolean);}
+function ehCoorientacao(el){const nodes=[el].concat([...el.getElementsByTagName("*")]);for(const nd of nodes){const at=nd.attributes;if(!at)continue;for(let i=0;i<at.length;i++){const v=(at[i].value||"").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"");if(/\bCO[_\- ]?ORIENTAD/.test(v))return true;}}return false;}
 function orientandoDe(el){const ks=el.getElementsByTagName("*");for(const k of ks){const n=k.getAttribute("NOME-DO-ORIENTANDO")||k.getAttribute("NOME-DO-ORIENTADO");if(n)return n;}return el.getAttribute("NOME-DO-ORIENTANDO")||el.getAttribute("NOME-DO-ORIENTADO")||"";}
 function isDiscente(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size||!STATE.discenteTok)return false;for(const d of STATE.discenteTok){if(t.has(d.first)&&t.has(d.last))return true;}return false;}
 function temDiscente(autores){for(const a of (autores||[]))if(isDiscente(a))return true;return false;}
@@ -358,7 +359,7 @@ function parseLattesXml(xml){
     const isAnd=tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO")===0;
     const isCon=tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA-MESTRADO")===0;
     if(isAnd)STATE.orientOngoing++;else if(isCon)STATE.orientConcluidas.push(anoOrientacao(el));
-    if(isAnd||isCon){const nm=orientandoDe(el);const t=nameTokens(nm);if(t.length>=2){const k=t[0]+"|"+t[t.length-1];if(!_ds.has(k)){_ds.add(k);STATE.discenteTok.push({first:t[0],last:t[t.length-1]});}}}
+    if(isCon&&!ehCoorientacao(el)){const nm=orientandoDe(el);const t=nameTokens(nm);if(t.length>=2){const k=t[0]+"|"+t[t.length-1];if(!_ds.has(k)){_ds.add(k);STATE.discenteTok.push({first:t[0],last:t[t.length-1]});}}}
   }
   STATE.totalDiscentes=STATE.discenteTok.length;
   for(const a of STATE.articles){a.discentes=discentesDe(a.autores);a.hasDiscente=a.discentes.length>0;}
