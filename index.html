@@ -335,6 +335,7 @@ function autoresDe(node){return [...node.getElementsByTagName("AUTORES")].map(x=
 function orientandoDe(el){const ks=el.getElementsByTagName("*");for(const k of ks){const n=k.getAttribute("NOME-DO-ORIENTANDO")||k.getAttribute("NOME-DO-ORIENTADO");if(n)return n;}return el.getAttribute("NOME-DO-ORIENTANDO")||el.getAttribute("NOME-DO-ORIENTADO")||"";}
 function isDiscente(nomeAutor){const t=new Set(nameTokens(nomeAutor));if(!t.size||!STATE.discenteTok)return false;for(const d of STATE.discenteTok){if(t.has(d.first)&&t.has(d.last))return true;}return false;}
 function temDiscente(autores){for(const a of (autores||[]))if(isDiscente(a))return true;return false;}
+function discentesDe(autores){const s=new Set();for(const a of (autores||[])){const t=new Set(nameTokens(a));if(!t.size)continue;for(const d of (STATE.discenteTok||[])){if(t.has(d.first)&&t.has(d.last))s.add(d.first+"|"+d.last);}}return [...s];}
 function anoOrientacao(el){const ks=el.getElementsByTagName("*");for(const k of ks){const y=k.getAttribute("ANO")||k.getAttribute("ANO-DE-CONCLUSAO")||k.getAttribute("ANO-DE-INICIO");if(y&&/^\d{4}$/.test(y))return +y;}const y=el.getAttribute("ANO");return (y&&/^\d{4}$/.test(y))?+y:null;}
 function parseLattesXml(xml){
   STATE.articles=[];STATE.confs=[];
@@ -359,8 +360,9 @@ function parseLattesXml(xml){
     if(isAnd)STATE.orientOngoing++;else if(isCon)STATE.orientConcluidas.push(anoOrientacao(el));
     if(isAnd||isCon){const nm=orientandoDe(el);const t=nameTokens(nm);if(t.length>=2){const k=t[0]+"|"+t[t.length-1];if(!_ds.has(k)){_ds.add(k);STATE.discenteTok.push({first:t[0],last:t[t.length-1]});}}}
   }
-  for(const a of STATE.articles)a.hasDiscente=temDiscente(a.autores);
-  for(const c of STATE.confs)c.hasDiscente=temDiscente(c.autores);
+  STATE.totalDiscentes=STATE.discenteTok.length;
+  for(const a of STATE.articles){a.discentes=discentesDe(a.autores);a.hasDiscente=a.discentes.length>0;}
+  for(const c of STATE.confs){c.discentes=discentesDe(c.autores);c.hasDiscente=c.discentes.length>0;}
 }
 
 /* ===== correspondência ===== */
@@ -397,10 +399,10 @@ function recompute(){
   const soC=document.getElementById("soCompletos").checked;const wins=windows(Y);
   document.getElementById("windowsNote").textContent="Janelas móveis: ano corrente = "+Y+" · 2 anos = "+(Y-1)+"–"+Y+" · 3 anos = "+(Y-2)+"–"+Y+" (janela do regimento, ~36 meses) · 5 anos = "+(Y-4)+"–"+Y;
   const confItems=STATE.confs.filter(c=>!soC||c.natureza==="COMPLETO");
-  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato,divisor:a.divisor||1,disc:!!a.hasDiscente})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato,divisor:c.divisor||1,disc:!!c.hasDiscente}))];
-  const agg={};for(const w of wins)agg[w.key]={total:0,per:0,conf:0,nPer:0,nConf:0,nDisc:0,byEstr:{per:{},conf:{}}};
+  const items=[...STATE.articles.map(a=>({tipo:"per",ano:a.ano,estrato:a.estrato,divisor:a.divisor||1,disc:!!a.hasDiscente,dk:a.discentes||[]})),...confItems.map(c=>({tipo:"conf",ano:c.ano,estrato:c.estrato,divisor:c.divisor||1,disc:!!c.hasDiscente,dk:c.discentes||[]}))];
+  const agg={};for(const w of wins)agg[w.key]={total:0,per:0,conf:0,nPer:0,nConf:0,nDisc:0,discSet:new Set(),byEstr:{per:{},conf:{}}};
   for(const it of items){if(it.ano===null)continue;const eff=ptsBase(it)/(it.divisor||1);
-    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=eff;if(it.disc)A.nDisc++;if(it.tipo==="per"){A.per+=eff;A.nPer++;}else{A.conf+=eff;A.nConf++;}if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=eff;}}}
+    for(const w of wins)if(it.ano>=w.from&&it.ano<=w.to){const A=agg[w.key];A.total+=eff;if(it.disc)A.nDisc++;if(it.dk)for(const k of it.dk)A.discSet.add(k);if(it.tipo==="per"){A.per+=eff;A.nPer++;}else{A.conf+=eff;A.nConf++;}if(it.estrato){const s=A.byEstr[it.tipo];if(!s[it.estrato])s[it.estrato]={n:0,pts:0};s[it.estrato].n++;s[it.estrato].pts+=eff;}}}
   renderResults(wins,agg);renderCompliance(Y,soC);
 }
 
@@ -418,7 +420,7 @@ function renderResults(wins,agg){
   if(!STATE.articles.length&&!STATE.confs.length){el.innerHTML='<div class="banner err"><span class="ico">!</span><span>Nenhuma publicação lida do XML. Confirme que o arquivo é o currículo exportado do Lattes.</span></div>';return;}
   let h='<div class="ficha">';
   for(const w of wins){const A=agg[w.key];const yrs=w.from===w.to?String(w.to):w.from+"–"+w.to;
-    h+='<div class="card'+(w.reg?" win3":"")+'"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+(w.reg?" · regimento":"")+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div><div><span>Com discente</span><b>'+(STATE.mode==="PDF"?'requer XML':(A.nDisc+'/'+(A.nPer+A.nConf)+((A.nPer+A.nConf)>0?' · '+Math.round(A.nDisc/(A.nPer+A.nConf)*100)+'%':'')))+'</b></div></div></div>';}
+    h+='<div class="card'+(w.reg?" win3":"")+'"><p class="clabel">'+esc(w.label)+'</p><p class="cyears">'+yrs+(w.reg?" · regimento":"")+'</p><div class="total">'+fmt(A.total)+'<span class="u">pts</span></div><div class="split"><div><span>Periódicos</span><b>'+fmt(A.per)+' · '+A.nPer+'</b></div><div><span>Conferências</span><b>'+fmt(A.conf)+' · '+A.nConf+'</b></div><div><span>Alunos coautores</span><b>'+(STATE.mode==="PDF"?'requer XML':((STATE.totalDiscentes||0)>0?(A.discSet.size+'/'+STATE.totalDiscentes+' · '+Math.round(A.discSet.size/STATE.totalDiscentes*100)+'%'):'—'))+'</b></div></div></div>';}
   h+='</div>';
   h+=breakdown("Periódicos por estrato","per",wins,agg)+breakdown("Conferências por estrato","conf",wins,agg)+review();
   el.innerHTML=h;wireInputs();
