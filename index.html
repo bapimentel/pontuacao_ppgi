@@ -355,8 +355,8 @@ function parseLattesXml(xml){
   }
   STATE.orientOngoing=0;STATE.orientConcluidas=[];STATE.discenteTok=[];const _ds=new Set();
   for(const el of doc.getElementsByTagName("*")){const tn=el.tagName||"";
-    const isAnd=tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE")===0;
-    const isCon=tn.indexOf("ORIENTACOES-CONCLUIDAS-DE")===0||tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA")===0;
+    const isAnd=tn.indexOf("ORIENTACAO-EM-ANDAMENTO-DE-MESTRADO")===0;
+    const isCon=tn.indexOf("ORIENTACOES-CONCLUIDAS-PARA-MESTRADO")===0;
     if(isAnd)STATE.orientOngoing++;else if(isCon)STATE.orientConcluidas.push(anoOrientacao(el));
     if(isAnd||isCon){const nm=orientandoDe(el);const t=nameTokens(nm);if(t.length>=2){const k=t[0]+"|"+t[t.length-1];if(!_ds.has(k)){_ds.add(k);STATE.discenteTok.push({first:t[0],last:t[t.length-1]});}}}
   }
@@ -488,7 +488,7 @@ function renderCompliance(Y,soC){
   const rr=[{ok:pts>=2.5,desc:ptsDesc,val:fmt(pts),lim:"≥ 2.5"},
      {ok:nA4>=1,desc:"Periódicos A4 ou superior (efetivamente publicados)",val:nA4,lim:"≥ 1"}];
   if(pdf){rr.push({info:true,desc:"Orientações em andamento ou concluídas (24 meses)",val:"requer XML"});rr.push({info:true,desc:"Produção em coautoria com discente do PPGI",val:"requer XML"});}
-  else{rr.push({ok:orient>=2,desc:"Orientações em andamento ou concluídas nos últimos 24 meses ("+oAnd+" em andamento · "+oConcl+" concluídas)",val:orient,lim:"≥ 2"});rr.push({ok:discW>=1,desc:"Ao menos uma produção em coautoria com discente do PPGI (últimos 36 meses)",val:discW,lim:"≥ 1"});}
+  else{rr.push({ok:orient>=2,desc:"Orientações de mestrado em andamento ou concluídas nos últimos 24 meses ("+oAnd+" em andamento · "+oConcl+" concluídas)",val:orient,lim:"≥ 2"});rr.push({ok:discW>=1,desc:"Ao menos uma produção em coautoria com discente do PPGI (últimos 36 meses)",val:discW,lim:"≥ 1"});}
   h+=bloco("Recredenciamento","Art. 4º · pesquisa "+from+"–"+to+(pdf?"":" · orientação "+oFrom+"–"+Y),
     {ok:"Atende aos critérios verificáveis",no:"Não atende aos critérios verificáveis"},rr);
   const obsPdf=pdf?"No modo PDF, os coautores docentes do PPGI são detectados pelos nomes nas citações (ajuste o divisor por linha se necessário); as verificações de orientação e de coautoria com discente dependem dos dados estruturados do XML. ":"";
