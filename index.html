@@ -67,6 +67,7 @@
   .windows-note{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin:14px 0 0}
   .banner{display:flex;gap:12px;align-items:flex-start;background:#fbf4e7;border:1px solid #ecdcbf;border-left:3px solid var(--warn);border-radius:0;padding:12px 15px;margin:0 0 14px;font-size:13.5px;color:#7c5a1f}
   .banner.err{background:#fbecea;border-color:#e7cdca;border-left-color:var(--no);color:#7f2118}
+  .banner.ok{background:#e7f3ea;border-color:#bcd9c7;border-left-color:var(--ok);color:#1c5b39}
   .banner .ico{font-family:var(--mono);font-weight:700;flex:0 0 auto}
   .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
   @media (max-width:720px){.score-grid{grid-template-columns:1fr}}
@@ -283,8 +284,12 @@ async function handleFile(f){
     else{const t=decodeXml(await f.arrayBuffer());if(!looksLattes(t))throw new Error("o XML não parece um currículo Lattes");parseLattesXml(t);}
   }catch(e){hideProg();msg.innerHTML='<div class="banner err"><span class="ico">!</span><span>Falha ao ler: '+esc(e.message)+'</span></div>';return;}
   hideProg();STATE.loaded=true;renderFileList();recompute();
+  const nP=STATE.articles.length,nC=STATE.confs.length;
+  msg.innerHTML=(nP+nC>0)
+    ?'<div class="banner ok"><span class="ico">✓</span><span><b>Currículo lido com sucesso.</b> '+esc(STATE.file)+' · '+nP+' artigos · '+nC+' trabalhos em eventos. Você pode enviar outro arquivo quando quiser.</span></div>'
+    :'<div class="banner"><span class="ico">i</span><span>Currículo lido, mas nenhuma publicação foi encontrada no arquivo.</span></div>';
 }
-document.getElementById("file").addEventListener("change",ev=>handleFile(ev.target.files[0]));
+document.getElementById("file").addEventListener("change",ev=>{const f=ev.target.files[0];ev.target.value="";handleFile(f);});
 (function(){const dz=document.getElementById("drop");if(!dz)return;
   ["dragenter","dragover"].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();ev.stopPropagation();dz.classList.add("drag");}));
   dz.addEventListener("dragleave",ev=>{ev.preventDefault();ev.stopPropagation();if(ev.target===dz)dz.classList.remove("drag");});
